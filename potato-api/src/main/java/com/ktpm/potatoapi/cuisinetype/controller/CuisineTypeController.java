@@ -4,6 +4,7 @@ import com.ktpm.potatoapi.cuisinetype.dto.CuisineTypeRequest;
 import com.ktpm.potatoapi.cuisinetype.service.CuisineTypeService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -36,7 +37,7 @@ public class CuisineTypeController {
     @PostMapping(path = "/admin/cuisine-types", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "Create a new cuisine type",
             description = "API for System Admin to create a new cuisine type")
-    public ResponseEntity<?> createCuisineType(@ModelAttribute CuisineTypeRequest request) {
+    public ResponseEntity<?> createCuisineType(@ModelAttribute @Valid CuisineTypeRequest request) {
         cuisineTypeService.createCuisineType(request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
     }
