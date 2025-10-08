@@ -1,0 +1,16 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /potato-api
+
+spring:
+  application:
+    name: potato-api
+  datasource:
+    url: "jdbc:mysql://localhost:3307/potato_api"
+    username: root
+    password: 171104
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
