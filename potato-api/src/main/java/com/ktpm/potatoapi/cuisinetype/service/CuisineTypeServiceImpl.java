@@ -1,6 +1,8 @@
 package com.ktpm.potatoapi.cuisinetype.service;
 
 import com.ktpm.potatoapi.cloudinary.CloudinaryService;
+import com.ktpm.potatoapi.common.exception.AppException;
+import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.cuisinetype.dto.CuisineTypeRequest;
 import com.ktpm.potatoapi.cuisinetype.dto.CuisineTypeResponse;
 import com.ktpm.potatoapi.cuisinetype.entity.CuisineType;
@@ -27,7 +29,7 @@ public class CuisineTypeServiceImpl implements CuisineTypeService {
 
     @Override
     public List<CuisineTypeResponse> getAllCuisineTypes() {
-        log.info("System Admin get all cuisine types successfully");
+        log.info("Get all cuisine types successfully");
         return cuisineTypeRepository.findAll().stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -35,7 +37,7 @@ public class CuisineTypeServiceImpl implements CuisineTypeService {
 
     @Override
     public List<CuisineTypeResponse> getAllVisibleCuisineTypes() {
-        log.info("Merchant Admin or Customer get all visible cuisine types successfully");
+        log.info("Get all visible cuisine types successfully");
         return cuisineTypeRepository.findAllByIsVisibleTrue().stream()
                 .map(mapper::toResponse)
                 .toList();
@@ -52,14 +54,14 @@ public class CuisineTypeServiceImpl implements CuisineTypeService {
             log.info("Create cuisine type {} successfully", request.getName());
         } catch (DataIntegrityViolationException e) {
             log.error("Create cuisine type failed");
-            throw new RuntimeException("cuisine type existed");
+            throw new AppException(ErrorCode.CUISINE_TYPE_EXISTED);
         }
     }
 
     @Override
     public void updateCuisineTypeStatus(Long id, boolean isVisible) {
         CuisineType cuisineType = cuisineTypeRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("cuisine type not found"));
+                .orElseThrow(() -> new AppException(ErrorCode.CUISINE_TYPE_NOT_FOUND));
 
         cuisineType.setVisible(isVisible);
         cuisineTypeRepository.save(cuisineType);
