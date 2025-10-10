@@ -13,6 +13,8 @@ public enum ErrorCode {
     JSON_INVALID(1001, "Invalid JSON request", HttpStatus.BAD_REQUEST),
     MESSAGE_KEY_INVALID(1002, "Invalid message key", HttpStatus.BAD_REQUEST),
     BIND_INVALID(1003, "Binding error occurred", HttpStatus.BAD_REQUEST),
+    UNAUTHENTICATED(1004, "Authentication is required", HttpStatus.UNAUTHORIZED),
+    UNAUTHORIZED(1005, "You do not have permission to access", HttpStatus.FORBIDDEN),
 
     // AUTH ERROR
     EMAIL_BLANK(2001, "Email is required", HttpStatus.BAD_REQUEST),
