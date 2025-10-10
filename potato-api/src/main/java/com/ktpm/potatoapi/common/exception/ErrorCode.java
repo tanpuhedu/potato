@@ -25,6 +25,10 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST),
     FULL_NAME_BLANK(2005, "Full name is required", HttpStatus.BAD_REQUEST),
 
+    // USER ERROR,
+    USER_EXISTED(3001, "User already existed", HttpStatus.BAD_REQUEST),
+    USER_NOT_FOUND(3002, "User not existed", HttpStatus.NOT_FOUND),
+
     // CUISINE TYPE ERROR,
     CUISINE_TYPE_EXISTED(5001, "Cuisine type already existed", HttpStatus.BAD_REQUEST),
     CUISINE_TYPE_NOT_FOUND(5002, "Cuisine type not existed", HttpStatus.NOT_FOUND),
