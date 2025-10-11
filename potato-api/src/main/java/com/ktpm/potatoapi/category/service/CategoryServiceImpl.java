@@ -32,7 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
     @Override
     public List<CategoryResponse> getAllCategoriesOfMyMerchant() {
         log.info("Get all categories for Merchant Admin");
-        return categoryRepository.findAll()
+        return categoryRepository.findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId())
                 .stream()
                 .map(categoryMapper::toResponse)
                 .toList();
