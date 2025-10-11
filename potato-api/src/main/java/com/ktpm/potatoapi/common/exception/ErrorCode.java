@@ -26,6 +26,8 @@ public enum ErrorCode {
             "Password must be 8-20 characters long and contain at least one uppercase, one lowercase, one digit, and one special character",
             HttpStatus.BAD_REQUEST),
     FULL_NAME_BLANK(2005, "Full name is required", HttpStatus.BAD_REQUEST),
+    SAME_PASSWORD(2006, "New password must be different from current password", HttpStatus.BAD_REQUEST),
+    INVALID_CREDENTIALS(2007, "Invalid credentials", HttpStatus.BAD_REQUEST),
 
     // USER ERROR,
     USER_EXISTED(3001, "User already existed", HttpStatus.BAD_REQUEST),

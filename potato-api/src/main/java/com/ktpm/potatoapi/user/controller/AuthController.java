@@ -1,8 +1,8 @@
-package com.ktpm.potatoapi.auth.controller;
+package com.ktpm.potatoapi.user.controller;
 
-import com.ktpm.potatoapi.auth.dto.LogInRequest;
-import com.ktpm.potatoapi.auth.dto.SignUpRequest;
-import com.ktpm.potatoapi.auth.service.AuthService;
+import com.ktpm.potatoapi.user.dto.LogInRequest;
+import com.ktpm.potatoapi.user.dto.SignUpRequest;
+import com.ktpm.potatoapi.user.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;

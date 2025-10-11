@@ -1,6 +1,6 @@
-package com.ktpm.potatoapi.auth.repo;
+package com.ktpm.potatoapi.user.repo;
 
-import com.ktpm.potatoapi.auth.entity.User;
+import com.ktpm.potatoapi.user.entity.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

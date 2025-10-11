@@ -1,6 +1,6 @@
 package com.ktpm.potatoapi.merchant.entity;
 
-import com.ktpm.potatoapi.auth.entity.User;
+import com.ktpm.potatoapi.user.entity.User;
 import com.ktpm.potatoapi.cuisinetype.entity.CuisineType;
 import jakarta.persistence.*;
 import lombok.*;

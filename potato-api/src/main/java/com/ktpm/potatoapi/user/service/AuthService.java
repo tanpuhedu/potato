@@ -1,8 +1,8 @@
-package com.ktpm.potatoapi.auth.service;
+package com.ktpm.potatoapi.user.service;
 
-import com.ktpm.potatoapi.auth.dto.LogInRequest;
-import com.ktpm.potatoapi.auth.dto.AuthResponse;
-import com.ktpm.potatoapi.auth.dto.SignUpRequest;
+import com.ktpm.potatoapi.user.dto.LogInRequest;
+import com.ktpm.potatoapi.user.dto.AuthResponse;
+import com.ktpm.potatoapi.user.dto.SignUpRequest;
 import org.springframework.security.core.userdetails.UserDetailsService;
 
 public interface AuthService extends UserDetailsService {

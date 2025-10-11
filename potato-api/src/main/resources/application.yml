@@ -7,7 +7,7 @@ spring:
   application:
     name: potato-api
   datasource:
-    url: "jdbc:mysql://localhost:3307/potato_api"
+    url: "jdbc:mysql://localhost:3307/potato"
     username: root
     password: 171104
   jpa:

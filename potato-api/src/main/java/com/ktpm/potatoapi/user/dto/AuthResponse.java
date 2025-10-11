@@ -1,4 +1,4 @@
-package com.ktpm.potatoapi.auth.dto;
+package com.ktpm.potatoapi.user.dto;
 
 import lombok.*;
 import lombok.experimental.FieldDefaults;
