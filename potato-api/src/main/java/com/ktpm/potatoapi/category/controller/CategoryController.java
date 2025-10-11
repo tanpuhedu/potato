@@ -48,4 +48,11 @@ public class CategoryController {
         categoryService.deleteCategory(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/merchants/{merchantId}/categories")
+    @Operation(summary = "Show all categories of a merchant for Customer",
+            description = "API for Customer to retrieve a list of all categories of a merchant")
+    public ResponseEntity<?> getAllCategoriesForCustomer(@PathVariable Long merchantId) {
+        return ResponseEntity.ok(categoryService.getAllCategoriesForCustomer(merchantId));
+    }
 }

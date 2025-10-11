@@ -9,6 +9,7 @@ import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.common.utils.SecurityUtils;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
+import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -26,11 +27,28 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryRepository categoryRepository;
     CategoryMapper categoryMapper;
     SecurityUtils securityUtils;
+    MerchantRepository merchantRepository;
 
     @Override
     public List<CategoryResponse> getAllCategoriesOfMyMerchant() {
         log.info("Get all categories for Merchant Admin");
         return categoryRepository.findAll()
+                .stream()
+                .map(categoryMapper::toResponse)
+                .toList();
+    }
+
+    @Override
+    public List<CategoryResponse> getAllCategoriesForCustomer(Long merchantId) {
+        Merchant merchant = merchantRepository.findById(merchantId)
+                .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
+
+        if (!merchant.isOpen())
+            throw new AppException(ErrorCode.MERCHANT_CLOSED);
+
+        log.info("Get all categories for Customer");
+
+        return categoryRepository.findAllByMerchantIdAndIsActiveTrue(merchantId)
                 .stream()
                 .map(categoryMapper::toResponse)
                 .toList();

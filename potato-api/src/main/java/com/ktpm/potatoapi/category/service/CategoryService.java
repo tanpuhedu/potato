@@ -11,4 +11,7 @@ public interface CategoryService {
     void createCategory(CategoryRequest categoryRequest);
     void updateCategory(Long id, CategoryRequest categoryRequest);
     void deleteCategory(Long id);
+
+    // services for Customer
+    List<CategoryResponse> getAllCategoriesForCustomer(Long merchantId);
 }
