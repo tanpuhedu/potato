@@ -98,4 +98,18 @@ public class MerchantController {
         merchantService.updateMyMerchantOpenStatus(isOpen);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/merchants")
+    @Operation(summary = "Show all merchants for Customer",
+            description = "API for Customer to retrieve a list of all merchants which are active and open")
+    public ResponseEntity<?> getAllMerchantsForCustomer() {
+        return ResponseEntity.ok(merchantService.getAllMerchantsForCustomer());
+    }
+
+    @GetMapping("/merchants/{id}")
+    @Operation(summary = "Show a merchant for Customer",
+            description = "API for Customer to retrieve a specific merchant which is active and open")
+    public ResponseEntity<?> getMerchantForCustomer(@PathVariable Long id) {
+        return ResponseEntity.ok(merchantService.getMerchantForCustomer(id));
+    }
 }

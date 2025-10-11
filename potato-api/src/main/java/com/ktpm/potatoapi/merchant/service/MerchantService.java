@@ -24,4 +24,8 @@ public interface MerchantService {
     MerchantResponse getMyMerchant();
     void updateMyMerchant(MerchantUpdateRequest request, MultipartFile imgFile);
     void updateMyMerchantOpenStatus(boolean isOpen);
+
+    // services for CUSTOMER
+    List<MerchantResponse> getAllMerchantsForCustomer();
+    MerchantResponse getMerchantForCustomer(Long id);
 }

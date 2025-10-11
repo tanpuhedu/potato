@@ -199,6 +199,33 @@ public class MerchantServiceImpl implements MerchantService {
         log.info("Update {}'s open status to {}", merchant.getName(), isOpen);
     }
 
+    @Override
+    public List<MerchantResponse> getAllMerchantsForCustomer() {
+        log.info("Get all merchants for Customer");
+        return merchantRepository.findAllByIsOpenTrue().stream()
+                .map(merchant -> {
+                    MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
+                    merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+                    return merchantResponse;
+                })
+                .toList();
+    }
+
+    @Override
+    public MerchantResponse getMerchantForCustomer(Long id) {
+        Merchant merchant = merchantRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
+
+        if (!merchant.isOpen())
+            throw new AppException(ErrorCode.MERCHANT_CLOSED);
+
+        log.info("Get merchant {} for Customer", merchant.getName());
+
+        MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
+        merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return merchantResponse;
+    }
+
     private Set<CuisineType> mapCuisineTypes(Set<String> cuisineTypeNames) {
         if (cuisineTypeNames == null) return new HashSet<>();
         return cuisineTypeNames.stream()
