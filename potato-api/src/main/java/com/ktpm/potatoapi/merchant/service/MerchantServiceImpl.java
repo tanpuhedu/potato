@@ -1,0 +1,131 @@
+package com.ktpm.potatoapi.merchant.service;
+
+import com.ktpm.potatoapi.auth.entity.Role;
+import com.ktpm.potatoapi.auth.entity.User;
+import com.ktpm.potatoapi.auth.repo.UserRepository;
+import com.ktpm.potatoapi.common.exception.AppException;
+import com.ktpm.potatoapi.common.exception.ErrorCode;
+import com.ktpm.potatoapi.cuisinetype.entity.CuisineType;
+import com.ktpm.potatoapi.cuisinetype.repo.CuisineTypeRepository;
+import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationRequest;
+import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationResponse;
+import com.ktpm.potatoapi.merchant.entity.Merchant;
+import com.ktpm.potatoapi.merchant.entity.RegisteredMerchant;
+import com.ktpm.potatoapi.merchant.entity.RegistrationStatus;
+import com.ktpm.potatoapi.merchant.mapper.RegisteredMerchantMapper;
+import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
+import com.ktpm.potatoapi.merchant.repo.RegisteredMerchantRepository;
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
+@Slf4j
+public class MerchantServiceImpl implements MerchantService {
+    MerchantRepository merchantRepository;
+    RegisteredMerchantRepository registeredMerchantRepository;
+    RegisteredMerchantMapper registeredMerchantMapper;
+    UserRepository userRepository;
+    PasswordEncoder passwordEncoder;
+    CuisineTypeRepository cuisineTypeRepository;
+
+    @Override
+    public List<MerchantRegistrationResponse> getAllRegisteredMerchants() {
+        log.info("Get all registered merchants");
+        return registeredMerchantRepository.findAll().stream()
+                .map(registeredMerchant -> {
+                    MerchantRegistrationResponse response = registeredMerchantMapper.toResponse(registeredMerchant);
+                    response.setCuisineTypes(mapCuisineTypeNames(registeredMerchant.getCuisineTypes()));
+                    return response;
+                })
+                .toList();
+    }
+
+    @Override
+    public void registerMerchant(MerchantRegistrationRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            log.error("User already exists with email: {}", request.getEmail());
+            throw new AppException(ErrorCode.USER_EXISTED);
+        }
+        if (registeredMerchantRepository.existsByMerchantName(request.getMerchantName())) {
+            log.error("This merchant name ({}) is already registered", request.getMerchantName());
+            throw new AppException(ErrorCode.REGISTERED_MERCHANT_EXISTED);
+        }
+        if (merchantRepository.existsByName(request.getMerchantName())){
+            log.error("Merchant already exists with name: {}", request.getMerchantName());
+            throw new AppException(ErrorCode.MERCHANT_EXISTED);
+        }
+
+        RegisteredMerchant registeredMerchant = registeredMerchantMapper.toEntity(request);
+        registeredMerchant.setCuisineTypes(mapCuisineTypes(request.getCuisineTypes()));
+
+        try {
+            registeredMerchantRepository.save(registeredMerchant);
+            log.info("Register merchant {}", registeredMerchant.getMerchantName());
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.MERCHANT_EXISTED);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void approveMerchant(Long id) {
+        RegisteredMerchant registeredMerchant = registeredMerchantRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.REGISTERED_MERCHANT_NOT_FOUND));
+
+        if (registeredMerchant.getRegistrationStatus() != RegistrationStatus.PENDING)
+            throw new AppException(ErrorCode.REGISTERED_MERCHANT_STATUS_NOT_PENDING);
+
+        // tạo account cho merchant admin
+        String rawPassword = "12345678"; // default password
+        User merchantAdmin = User.builder()
+                .email(registeredMerchant.getEmail())
+                .password(passwordEncoder.encode(rawPassword))
+                .fullName(registeredMerchant.getFullName())
+                .role(Role.MERCHANT_ADMIN)
+                .build();
+        log.info("Create merchant admin with mail: {}", registeredMerchant.getEmail());
+        userRepository.save(merchantAdmin);
+
+        // cập nhật trạng thái đăng kí kinh doanh
+        registeredMerchant.setRegistrationStatus(RegistrationStatus.APPROVED);
+
+        // tạo merchant và gán merchant admin đã tạo
+        Merchant merchant = Merchant.builder()
+                .name(registeredMerchant.getMerchantName())
+                .address(registeredMerchant.getAddress())
+                .cuisineTypes(new HashSet<>(registeredMerchant.getCuisineTypes()))
+                .merchantAdmin(merchantAdmin)
+                .build();
+        merchantRepository.save(merchant);
+
+        log.info("Approve and Create merchant {}", merchant.getName());
+    }
+
+    private Set<CuisineType> mapCuisineTypes(Set<String> cuisineTypeNames) {
+        if (cuisineTypeNames == null) return new HashSet<>();
+        return cuisineTypeNames.stream()
+                .map(name -> cuisineTypeRepository.findByName(name)
+                        .orElseThrow(() -> new AppException(ErrorCode.CUISINE_TYPE_NOT_FOUND)))
+                .collect(Collectors.toSet());
+    }
+
+    private Set<String> mapCuisineTypeNames(Set<CuisineType> cuisineTypes) {
+        if (cuisineTypes == null) return new HashSet<>();
+        return cuisineTypes.stream()
+                .map(CuisineType::getName)
+                .collect(Collectors.toSet());
+    }
+}
