@@ -42,6 +42,7 @@ public enum ErrorCode {
     ADDRESS_BLANK(4008, "Merchant address is required", HttpStatus.BAD_REQUEST),
     OPENING_HOURS_EMPTY(4009, "Merchant opening hours are required", HttpStatus.BAD_REQUEST),
     CUISINE_TYPES_EMPTY(4010, "Merchant cuisine types are required", HttpStatus.BAD_REQUEST),
+    INTRO_BLANK(4011, "Merchant introduction is required", HttpStatus.BAD_REQUEST),
 
     // CUISINE TYPE ERROR,
     CUISINE_TYPE_EXISTED(5001, "Cuisine type already existed", HttpStatus.BAD_REQUEST),

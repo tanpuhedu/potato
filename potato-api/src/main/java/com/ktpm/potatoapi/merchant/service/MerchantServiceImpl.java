@@ -3,14 +3,17 @@ package com.ktpm.potatoapi.merchant.service;
 import com.ktpm.potatoapi.auth.entity.Role;
 import com.ktpm.potatoapi.auth.entity.User;
 import com.ktpm.potatoapi.auth.repo.UserRepository;
+import com.ktpm.potatoapi.cloudinary.CloudinaryService;
 import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
+import com.ktpm.potatoapi.common.utils.SecurityUtils;
 import com.ktpm.potatoapi.cuisinetype.entity.CuisineType;
 import com.ktpm.potatoapi.cuisinetype.repo.CuisineTypeRepository;
 import com.ktpm.potatoapi.mail.MailService;
 import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationRequest;
 import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationResponse;
 import com.ktpm.potatoapi.merchant.dto.MerchantResponse;
+import com.ktpm.potatoapi.merchant.dto.MerchantUpdateRequest;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.entity.RegisteredMerchant;
 import com.ktpm.potatoapi.merchant.entity.RegistrationStatus;
@@ -27,6 +30,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,6 +50,8 @@ public class MerchantServiceImpl implements MerchantService {
     CuisineTypeRepository cuisineTypeRepository;
     MailService mailService;
     MerchantMapper merchantMapper;
+    CloudinaryService cloudinaryService;
+    SecurityUtils securityUtils;
 
     @Override
     public List<MerchantRegistrationResponse> getAllRegisteredMerchants() {
@@ -160,6 +166,39 @@ public class MerchantServiceImpl implements MerchantService {
         log.info("Update {}'s active status to {}", merchant.getName(), isActive);
     }
 
+    @Override
+    public MerchantResponse getMyMerchant() {
+        Merchant merchant = securityUtils.getCurrentMerchant();
+
+        log.info("Get {}'s information", merchant.getName());
+
+        MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
+        merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return merchantResponse;
+    }
+
+    @Override
+    public void updateMyMerchant(MerchantUpdateRequest request, MultipartFile imgFile) {
+        Merchant merchant = securityUtils.getCurrentMerchant();
+
+        merchantMapper.update(merchant, request);
+        merchant.setCuisineTypes(mapCuisineTypes(request.getCuisineTypes()));
+        merchant.setImgUrl(uploadMerchantImage(imgFile));
+        merchantRepository.save(merchant);
+
+        log.info("Update {}'s information", merchant.getName());
+    }
+
+    @Override
+    public void updateMyMerchantOpenStatus(boolean isOpen) {
+        Merchant merchant = securityUtils.getCurrentMerchant();
+
+        merchant.setOpen(isOpen);
+        merchantRepository.save(merchant);
+
+        log.info("Update {}'s open status to {}", merchant.getName(), isOpen);
+    }
+
     private Set<CuisineType> mapCuisineTypes(Set<String> cuisineTypeNames) {
         if (cuisineTypeNames == null) return new HashSet<>();
         return cuisineTypeNames.stream()
@@ -173,5 +212,9 @@ public class MerchantServiceImpl implements MerchantService {
         return cuisineTypes.stream()
                 .map(CuisineType::getName)
                 .collect(Collectors.toSet());
+    }
+
+    private String uploadMerchantImage(MultipartFile file) {
+        return cloudinaryService.upload(file, "merchants");
     }
 }
