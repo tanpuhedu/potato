@@ -15,6 +15,8 @@ public enum ErrorCode {
     BIND_INVALID(1003, "Binding error occurred", HttpStatus.BAD_REQUEST),
     UNAUTHENTICATED(1004, "Authentication is required", HttpStatus.UNAUTHORIZED),
     UNAUTHORIZED(1005, "You do not have permission to access", HttpStatus.FORBIDDEN),
+    MUST_BE_OWNED_OF_CURRENT_MERCHANT(1006,
+            "Merchant Admin does not own the current merchant", HttpStatus.BAD_REQUEST),
 
     // AUTH ERROR
     EMAIL_BLANK(2001, "Email is required", HttpStatus.BAD_REQUEST),
@@ -50,6 +52,11 @@ public enum ErrorCode {
     CUISINE_TYPE_NOT_FOUND(5002, "Cuisine type not existed", HttpStatus.NOT_FOUND),
     CUISINE_TYPE_NAME_BLANK(5003, "Cuisine type name is required", HttpStatus.BAD_REQUEST),
     CUISINE_TYPE_IMG_NULL(5004, "Cuisine type image file is required", HttpStatus.BAD_REQUEST),
+
+    // CATEGORY ERROR
+    CATEGORY_EXISTED(2001, "Category already existed in this merchant", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(2002, "Category not existed in this merchant", HttpStatus.NOT_FOUND),
+    CATEGORY_NAME_BLANK(2003, "Category name is required", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;
