@@ -1,6 +1,6 @@
 package com.ktpm.potatoapi.common.utils;
 
-import com.ktpm.potatoapi.auth.entity.User;
+import com.ktpm.potatoapi.user.entity.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

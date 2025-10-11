@@ -1,4 +1,4 @@
-package com.ktpm.potatoapi.auth.entity;
+package com.ktpm.potatoapi.user.entity;
 
 import jakarta.persistence.*;
 import lombok.*;

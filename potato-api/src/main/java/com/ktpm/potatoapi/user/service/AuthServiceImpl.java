@@ -1,12 +1,12 @@
-package com.ktpm.potatoapi.auth.service;
+package com.ktpm.potatoapi.user.service;
 
-import com.ktpm.potatoapi.auth.dto.AuthResponse;
-import com.ktpm.potatoapi.auth.dto.LogInRequest;
-import com.ktpm.potatoapi.auth.dto.SignUpRequest;
-import com.ktpm.potatoapi.auth.entity.Role;
-import com.ktpm.potatoapi.auth.entity.User;
-import com.ktpm.potatoapi.auth.mapper.UserMapper;
-import com.ktpm.potatoapi.auth.repo.UserRepository;
+import com.ktpm.potatoapi.user.dto.AuthResponse;
+import com.ktpm.potatoapi.user.dto.LogInRequest;
+import com.ktpm.potatoapi.user.dto.SignUpRequest;
+import com.ktpm.potatoapi.user.entity.Role;
+import com.ktpm.potatoapi.user.entity.User;
+import com.ktpm.potatoapi.user.mapper.UserMapper;
+import com.ktpm.potatoapi.user.repo.UserRepository;
 import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.common.utils.JwtUtils;

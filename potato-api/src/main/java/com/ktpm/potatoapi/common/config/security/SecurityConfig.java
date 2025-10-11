@@ -1,6 +1,6 @@
 package com.ktpm.potatoapi.common.config.security;
 
-import com.ktpm.potatoapi.auth.service.AuthService;
+import com.ktpm.potatoapi.user.service.AuthService;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;

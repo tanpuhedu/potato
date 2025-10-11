@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 public class SecurityUtils {
     MerchantRepository merchantRepository;
 
-    private String getCurrentUserEmail() {
+    public String getCurrentUserEmail() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication != null && authentication.getPrincipal() instanceof UserDetails userDetails)

@@ -1,7 +1,7 @@
-package com.ktpm.potatoapi.auth.mapper;
+package com.ktpm.potatoapi.user.mapper;
 
-import com.ktpm.potatoapi.auth.dto.SignUpRequest;
-import com.ktpm.potatoapi.auth.entity.User;
+import com.ktpm.potatoapi.user.dto.SignUpRequest;
+import com.ktpm.potatoapi.user.entity.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 

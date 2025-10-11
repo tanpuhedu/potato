@@ -1,8 +1,8 @@
 package com.ktpm.potatoapi.merchant.service;
 
-import com.ktpm.potatoapi.auth.entity.Role;
-import com.ktpm.potatoapi.auth.entity.User;
-import com.ktpm.potatoapi.auth.repo.UserRepository;
+import com.ktpm.potatoapi.user.entity.Role;
+import com.ktpm.potatoapi.user.entity.User;
+import com.ktpm.potatoapi.user.repo.UserRepository;
 import com.ktpm.potatoapi.cloudinary.CloudinaryService;
 import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
