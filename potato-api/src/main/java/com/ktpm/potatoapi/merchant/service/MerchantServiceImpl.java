@@ -7,6 +7,7 @@ import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.cuisinetype.entity.CuisineType;
 import com.ktpm.potatoapi.cuisinetype.repo.CuisineTypeRepository;
+import com.ktpm.potatoapi.mail.MailService;
 import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationRequest;
 import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationResponse;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
@@ -15,6 +16,7 @@ import com.ktpm.potatoapi.merchant.entity.RegistrationStatus;
 import com.ktpm.potatoapi.merchant.mapper.RegisteredMerchantMapper;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
 import com.ktpm.potatoapi.merchant.repo.RegisteredMerchantRepository;
+import jakarta.mail.MessagingException;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -40,6 +42,7 @@ public class MerchantServiceImpl implements MerchantService {
     UserRepository userRepository;
     PasswordEncoder passwordEncoder;
     CuisineTypeRepository cuisineTypeRepository;
+    MailService mailService;
 
     @Override
     public List<MerchantRegistrationResponse> getAllRegisteredMerchants() {
@@ -81,7 +84,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     @Transactional
-    public void approveMerchant(Long id) {
+    public void approveMerchant(Long id) throws MessagingException {
         RegisteredMerchant registeredMerchant = registeredMerchantRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.REGISTERED_MERCHANT_NOT_FOUND));
 
@@ -110,6 +113,9 @@ public class MerchantServiceImpl implements MerchantService {
                 .merchantAdmin(merchantAdmin)
                 .build();
         merchantRepository.save(merchant);
+
+        // gửi mail phê duyệt
+        mailService.sendApprovalEmail(registeredMerchant.getEmail(), merchant.getName(), rawPassword);
 
         log.info("Approve and Create merchant {}", merchant.getName());
     }

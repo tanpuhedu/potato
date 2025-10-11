@@ -17,6 +17,17 @@ spring:
   servlet:
     multipart:
       max-file-size: 10MB
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: "potatoapp.adm1n@gmail.com"
+    password: "usvidloymphbjdci"
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 cloudinary:
   cloud_name: "dcudlkqcm"

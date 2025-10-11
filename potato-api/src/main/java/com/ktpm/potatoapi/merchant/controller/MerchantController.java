@@ -4,6 +4,7 @@ import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationRequest;
 import com.ktpm.potatoapi.merchant.service.MerchantService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +37,7 @@ public class MerchantController {
     @PostMapping("/admin/registered-merchants/{id}/approve")
     @Operation(summary = "Approve a registered merchant",
             description = "API for System Admin to approve a registered merchant")
-    public ResponseEntity<?> approveMerchant(@PathVariable Long id) {
+    public ResponseEntity<?> approveMerchant(@PathVariable Long id) throws MessagingException {
         merchantService.approveMerchant(id);
         return ResponseEntity.ok().build();
     }
