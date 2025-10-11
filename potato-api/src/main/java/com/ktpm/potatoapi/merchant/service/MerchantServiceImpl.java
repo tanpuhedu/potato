@@ -10,9 +10,11 @@ import com.ktpm.potatoapi.cuisinetype.repo.CuisineTypeRepository;
 import com.ktpm.potatoapi.mail.MailService;
 import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationRequest;
 import com.ktpm.potatoapi.merchant.dto.MerchantRegistrationResponse;
+import com.ktpm.potatoapi.merchant.dto.MerchantResponse;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.entity.RegisteredMerchant;
 import com.ktpm.potatoapi.merchant.entity.RegistrationStatus;
+import com.ktpm.potatoapi.merchant.mapper.MerchantMapper;
 import com.ktpm.potatoapi.merchant.mapper.RegisteredMerchantMapper;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
 import com.ktpm.potatoapi.merchant.repo.RegisteredMerchantRepository;
@@ -43,6 +45,7 @@ public class MerchantServiceImpl implements MerchantService {
     PasswordEncoder passwordEncoder;
     CuisineTypeRepository cuisineTypeRepository;
     MailService mailService;
+    MerchantMapper merchantMapper;
 
     @Override
     public List<MerchantRegistrationResponse> getAllRegisteredMerchants() {
@@ -118,6 +121,43 @@ public class MerchantServiceImpl implements MerchantService {
         mailService.sendApprovalEmail(registeredMerchant.getEmail(), merchant.getName(), rawPassword);
 
         log.info("Approve and Create merchant {}", merchant.getName());
+    }
+
+    @Override
+    public List<MerchantResponse> getAllMerchantsForSysAdmin() {
+        log.info("Get all merchants for System Admin");
+        return merchantRepository.findAll().stream()
+                .map(merchant -> {
+                    MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
+                    merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+                    return merchantResponse;
+                })
+                .toList();
+    }
+
+    @Override
+    public MerchantResponse getMerchantForSysAdmin(Long id) {
+        Merchant merchant = merchantRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
+
+        log.info("Get merchant {} for System Admin", merchant.getName());
+
+        MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
+        merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return merchantResponse;
+    }
+
+    @Override
+    public void updateMerchantActiveStatus(Long id, boolean isActive) {
+        Merchant merchant = merchantRepository.findById(id)
+                .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
+
+        merchant.setActive(isActive);
+        merchant.setOpen(isActive);
+
+        merchantRepository.save(merchant);
+
+        log.info("Update {}'s active status to {}", merchant.getName(), isActive);
     }
 
     private Set<CuisineType> mapCuisineTypes(Set<String> cuisineTypeNames) {

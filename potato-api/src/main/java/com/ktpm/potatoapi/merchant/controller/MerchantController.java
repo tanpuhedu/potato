@@ -41,4 +41,26 @@ public class MerchantController {
         merchantService.approveMerchant(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/admin/merchants")
+    @Operation(summary = "Show all merchants for System Admin",
+            description = "API for System Admin to retrieve a list of all merchants")
+    public ResponseEntity<?> getAllMerchantsForSysAdmin() {
+        return ResponseEntity.ok(merchantService.getAllMerchantsForSysAdmin());
+    }
+
+    @GetMapping("/admin/merchants/{id}")
+    @Operation(summary = "Show a merchant for System Admin",
+            description = "API for System Admin to retrieve a specific merchant")
+    public ResponseEntity<?> getMerchantForSysAdmin(@PathVariable Long id) {
+        return ResponseEntity.ok(merchantService.getMerchantForSysAdmin(id));
+    }
+
+    @PatchMapping("/admin/merchants/{id}/isActive")
+    @Operation(summary = "Change a merchant's active status",
+            description = "API for System Admin to activate/deactivate a merchant")
+    public ResponseEntity<?> updateMerchantActiveStatus(@PathVariable Long id, @RequestParam boolean isActive) {
+        merchantService.updateMerchantActiveStatus(id, isActive);
+        return ResponseEntity.ok().build();
+    }
 }
