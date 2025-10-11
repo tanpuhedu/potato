@@ -26,7 +26,11 @@ public class SecurityConfig {
     JwtFilter jwtFilter;
     CustomAuthEntryPoint customAuthEntryPoint;
     String[] OPENAPI_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**"};
-    String[] PUBLIC_ENDPOINTS = {"/auth/**", "/cuisine-types", "/merchant/register"};
+    String[] PUBLIC_ENDPOINTS = {
+            "/auth/**", "/merchant/register",
+            "/cuisine-types",
+            "/merchants/{merchantId}/categories", "/merchants", "/merchants/{id}"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
