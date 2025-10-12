@@ -56,9 +56,9 @@ public enum ErrorCode {
     CUISINE_TYPE_IMG_NULL(5004, "Cuisine type image file is required", HttpStatus.BAD_REQUEST),
 
     // CATEGORY ERROR
-    CATEGORY_EXISTED(2001, "Category already existed in this merchant", HttpStatus.BAD_REQUEST),
-    CATEGORY_NOT_FOUND(2002, "Category not existed in this merchant", HttpStatus.NOT_FOUND),
-    CATEGORY_NAME_BLANK(2003, "Category name is required", HttpStatus.BAD_REQUEST),
+    CATEGORY_EXISTED(6001, "Category already existed in this merchant", HttpStatus.BAD_REQUEST),
+    CATEGORY_NOT_FOUND(6002, "Category not existed in this merchant", HttpStatus.NOT_FOUND),
+    CATEGORY_NAME_BLANK(6003, "Category name is required", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;
