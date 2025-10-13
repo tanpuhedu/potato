@@ -1,7 +1,8 @@
 package com.ktpm.potatoapi.option.controller;
 
 import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
-import com.ktpm.potatoapi.option.dto.OptionValueCreationRequest;
+import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
+import com.ktpm.potatoapi.option.dto.OptionValueRequest;
 import com.ktpm.potatoapi.option.service.OptionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -39,9 +40,25 @@ public class OptionController {
     @Operation(summary = "Create a new option value",
             description = "API for Merchant Admin to create a new option value for an existing option")
     public ResponseEntity<?> createOptionValueForExistingOption(@PathVariable Long optionId,
-                                               @RequestBody @Valid OptionValueCreationRequest request) {
+                                               @RequestBody @Valid OptionValueRequest request) {
         optionService.createOptionValueForExistingOption(optionId, request);
         return ResponseEntity.status(HttpStatus.CREATED).build();
+    }
+
+    @PutMapping("merchant/options/{optionId}")
+    @Operation(summary = "Update option information",
+            description = "API for Merchant Admin to update an option information")
+    public ResponseEntity<?> updateOption(@PathVariable Long optionId, OptionUpdateRequest request) {
+        optionService.updateOption(optionId, request);
+        return ResponseEntity.ok().build();
+    }
+
+    @PutMapping("merchant/options/values/{valueId}")
+    @Operation(summary = "Update option value information",
+            description = "API for Merchant Admin to update an option value information")
+    public ResponseEntity<?> updateOptionValue(@PathVariable Long valueId, OptionValueRequest request) {
+        optionService.updateOptionValue(valueId, request);
+        return ResponseEntity.ok().build();
     }
 
     @PatchMapping("/merchant/options/values/{valueId}/isVisible")

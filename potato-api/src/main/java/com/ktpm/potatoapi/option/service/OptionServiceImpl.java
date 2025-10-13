@@ -7,7 +7,8 @@ import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
 import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
 import com.ktpm.potatoapi.option.dto.OptionResponse;
-import com.ktpm.potatoapi.option.dto.OptionValueCreationRequest;
+import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
+import com.ktpm.potatoapi.option.dto.OptionValueRequest;
 import com.ktpm.potatoapi.option.entity.Option;
 import com.ktpm.potatoapi.option.entity.OptionValue;
 import com.ktpm.potatoapi.option.mapper.OptionMapper;
@@ -95,7 +96,7 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    public void createOptionValueForExistingOption(Long optionId, OptionValueCreationRequest request) {
+    public void createOptionValueForExistingOption(Long optionId, OptionValueRequest request) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
@@ -111,7 +112,36 @@ public class OptionServiceImpl implements OptionService {
         }
     }
 
-    // hàm này chưa xong
+    @Override
+    public void updateOption(Long optionId, OptionUpdateRequest request) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
+
+        option.setName(request.getName());
+        try {
+            optionRepository.save(option);
+            log.info("Update name of option {}", option.getName());
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.OPTION_EXISTED);
+        }
+    }
+
+    @Override
+    public void updateOptionValue(Long valueId, OptionValueRequest request) {
+        OptionValue optionValue = optionValueRepository.findById(valueId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
+
+        optionValue.setName(request.getName());
+        optionValue.setExtraPrice(request.getExtraPrice());
+
+        try {
+            optionValueRepository.save(optionValue);
+            log.info("Update option value {}", optionValue.getName());
+        } catch (DataIntegrityViolationException e) {
+            throw new AppException(ErrorCode.OPTION_VALUE_EXISTED);
+        }
+    }
+
     @Override
     public void updateOptionValueVisibleStatus(Long valueId, boolean isVisible) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
@@ -139,6 +169,6 @@ public class OptionServiceImpl implements OptionService {
         optionValueRepository.saveAll(allValues);
         optionRepository.save(option);
 
-        log.info("Update {}'s visible status successfully", optionValue.getName());
+        log.info("Update {}'s visible status", optionValue.getName());
     }
 }

@@ -21,5 +21,5 @@ public class OptionCreationRequest {
     boolean isRequired;
 
     @NotEmpty(message = "OPTION_VALUES_EMPTY")
-    List<OptionValueCreationRequest> optionValues;
+    List<OptionValueRequest> optionValues;
 }
