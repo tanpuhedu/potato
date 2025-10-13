@@ -59,6 +59,21 @@ public enum ErrorCode {
     CATEGORY_EXISTED(6001, "Category already existed in this merchant", HttpStatus.BAD_REQUEST),
     CATEGORY_NOT_FOUND(6002, "Category not existed in this merchant", HttpStatus.NOT_FOUND),
     CATEGORY_NAME_BLANK(6003, "Category name is required", HttpStatus.BAD_REQUEST),
+
+    // OPTION ERROR
+    OPTION_EXISTED(7001, "Option already existed", HttpStatus.BAD_REQUEST),
+    OPTION_NOT_FOUND(7002, "Option not existed", HttpStatus.NOT_FOUND),
+    OPTION_NAME_BLANK(7003, "Option name is required", HttpStatus.BAD_REQUEST),
+    OPTION_REQUIRED_STATUS_NULL(7004, "Option required status is required", HttpStatus.BAD_REQUEST),
+    OPTION_VALUES_EMPTY(7005, "Option value set is required", HttpStatus.BAD_REQUEST),
+    OPTION_VALUE_EXISTED(7006, "Option value already existed", HttpStatus.BAD_REQUEST),
+    OPTION_VALUE_NOT_FOUND(7007, "Option value not existed", HttpStatus.NOT_FOUND),
+    OPTION_VALUE_NAME_BLANK(7008, "Option value name is required", HttpStatus.BAD_REQUEST),
+    OPTION_VALUE_EXTRA_PRICE_NEGATIVE(
+            7009,
+            "Option value's extra price must be greater than or equal to 0",
+            HttpStatus.BAD_REQUEST
+    ),
     ;
 
     private final int code;
