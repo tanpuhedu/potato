@@ -84,7 +84,7 @@ public class MenuItemServiceImpl implements MenuItemService {
         Merchant merchant = securityUtils.getCurrentMerchant();
 
         MenuItem menuItem = menuItemMapper.toEntity(menuItemRequest);
-        menuItem.setImgUrl(uploadMenuItemImage(menuItemRequest.getImgFile()));
+        menuItem.setImgUrl(uploadMenuItemImage(menuItemRequest.getImgFile(), menuItem.getName()));
         menuItem.setCategory(category);
         menuItem.setMerchant(merchant);
 
@@ -146,7 +146,7 @@ public class MenuItemServiceImpl implements MenuItemService {
         log.info("Delete menu item {}", menuItem.getName());
     }
 
-    private String uploadMenuItemImage(MultipartFile file) {
-        return cloudinaryService.upload(file, "menu_items");
+    private String uploadMenuItemImage(MultipartFile file, String objectName) {
+        return cloudinaryService.upload(file, "menu_items", objectName);
     }
 }
