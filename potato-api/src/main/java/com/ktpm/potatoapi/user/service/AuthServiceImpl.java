@@ -54,7 +54,7 @@ public class AuthServiceImpl implements AuthService {
             throw new AppException(ErrorCode.UNAUTHENTICATED);
 
         // Generate Jwt token
-        log.info("{} sign up success", user.getEmail());
+        log.info("{} log in success", user.getEmail());
         return new AuthResponse(JwtUtils.createToken(user));
     }
 

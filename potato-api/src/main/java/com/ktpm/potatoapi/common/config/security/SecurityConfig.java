@@ -25,6 +25,7 @@ public class SecurityConfig {
     PasswordEncoder passwordEncoder;
     JwtFilter jwtFilter;
     CustomAuthEntryPoint customAuthEntryPoint;
+    CustomAccessDeniedHandler customAccessDeniedHandler;
     String[] OPENAPI_ENDPOINTS = {"/v3/api-docs/**", "/swagger-ui/**"};
     String[] PUBLIC_ENDPOINTS = {
             "/auth/**", "/merchant/register",
@@ -43,7 +44,10 @@ public class SecurityConfig {
                         .anyRequest().authenticated()
                 )
                 .csrf(AbstractHttpConfigurer::disable)
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(customAuthEntryPoint))
+                .exceptionHandling(ex -> ex
+                        .authenticationEntryPoint(customAuthEntryPoint)
+                        .accessDeniedHandler(customAccessDeniedHandler)
+                )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
