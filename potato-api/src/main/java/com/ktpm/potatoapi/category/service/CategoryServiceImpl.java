@@ -8,6 +8,7 @@ import com.ktpm.potatoapi.category.repo.CategoryRepository;
 import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.common.utils.SecurityUtils;
+import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
 import lombok.AccessLevel;
@@ -16,6 +17,7 @@ import lombok.experimental.FieldDefaults;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -28,6 +30,7 @@ public class CategoryServiceImpl implements CategoryService {
     CategoryMapper categoryMapper;
     SecurityUtils securityUtils;
     MerchantRepository merchantRepository;
+    MenuItemRepository menuItemRepository;
 
     @Override
     public List<CategoryResponse> getAllCategoriesOfMyMerchant() {
@@ -92,6 +95,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
+    @Transactional
     public void deleteCategory(Long id) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
@@ -105,6 +109,8 @@ public class CategoryServiceImpl implements CategoryService {
         category.setActive(false);
         categoryRepository.save(category);
 
-        log.info("{} delete {}", merchant.getName(), category.getName());
+        menuItemRepository.deleteByCategoryId(category.getId()); // xóa các menu item thuộc category này
+
+        log.info("{} delete {} and its menu items", merchant.getName(), category.getName());
     }
 }
