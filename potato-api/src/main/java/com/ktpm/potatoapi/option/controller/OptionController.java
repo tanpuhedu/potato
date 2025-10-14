@@ -70,6 +70,21 @@ public class OptionController {
         return ResponseEntity.ok().build();
     }
 
+    @DeleteMapping("/merchant/options/values/{valueId}")
+    @Operation(summary = "Delete option value",
+            description = "API for Merchant Admin to delete option value")
+    public ResponseEntity<?> deleteOptionValue(@PathVariable Long valueId) {
+        optionService.deleteOptionValue(valueId);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/merchant/options/{optionId}")
+    @Operation(summary = "Delete option",
+            description = "API for Merchant Admin to delete option and its values")
+    public ResponseEntity<?> deleteOption(@PathVariable Long optionId) {
+        optionService.deleteOption(optionId);
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping("/merchants/{merchantId}/options")
     @Operation(summary = "Show all options of a merchant",

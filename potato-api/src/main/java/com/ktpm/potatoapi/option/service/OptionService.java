@@ -15,6 +15,8 @@ public interface OptionService {
     void updateOption(Long optionId, OptionUpdateRequest request);
     void updateOptionValue(Long id, OptionValueRequest request);
     void updateOptionValueVisibleStatus(Long valueId, boolean isVisible);
+    void deleteOptionValue(Long valueId);
+    void deleteOption(Long optionId);
 
     // services for Customer
     List<OptionResponse> getAllOptionsForCustomer(Long merchantId);

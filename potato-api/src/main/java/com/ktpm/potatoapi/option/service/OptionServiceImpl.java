@@ -177,4 +177,55 @@ public class OptionServiceImpl implements OptionService {
 
         log.info("Update {}'s visible status", optionValue.getName());
     }
+
+    public void deleteOptionValue(Long valueId) {
+        OptionValue optionValue = optionValueRepository.findById(valueId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
+
+        optionValue.setActive(false);
+        optionValue.setVisible(false);
+
+        Option option = optionValue.getOption();
+        option.getOptionValues().remove(optionValue);
+
+        List<OptionValue> allValues = option.getOptionValues();
+        List<OptionValue> visibleValues = allValues.stream()
+                .filter(OptionValue::isVisible)
+                .toList();
+
+        // xử lí nếu optionValue là default
+        if (optionValue.isDefault()) {
+            optionValue.setDefault(false);
+
+            // chọn cái visible đầu tiên trong visibleValues làm default mới
+            if (!visibleValues.isEmpty())
+                visibleValues.get(0).setDefault(true);
+        }
+
+        // xử lí nếu đó là optionValue duy nhất của option
+        option.setActive(!visibleValues.isEmpty());
+
+        optionValueRepository.saveAll(allValues);
+        optionRepository.save(option);
+
+        log.info("Delete option value {}", optionValue.getName());
+    }
+
+    public void deleteOption(Long optionId) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
+
+        option.setActive(false);
+        option.setVisible(false);
+
+        List<OptionValue> optionValues = option.getOptionValues();
+        for (OptionValue optionValue : optionValues) {
+            optionValue.setActive(false);
+            optionValue.setVisible(false);
+        }
+
+        optionRepository.save(option);
+
+        log.info("Delete option {}", option.getName());
+    }
 }
