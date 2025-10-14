@@ -104,6 +104,12 @@ public class OptionServiceImpl implements OptionService {
         optionValue.setOption(option);
         optionValue.setDefault(false);
 
+        if (!option.isVisible())
+            option.setVisible(true);
+
+        if (option.isRequired())
+            optionValue.setDefault(true);
+
         try {
             optionValueRepository.save(optionValue);
             log.info("Create option value {} for option {}", optionValue.getName(), option.getName());
