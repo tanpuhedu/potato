@@ -61,8 +61,8 @@ public enum ErrorCode {
     CATEGORY_NAME_BLANK(6003, "Category name is required", HttpStatus.BAD_REQUEST),
 
     // OPTION ERROR
-    OPTION_EXISTED(7001, "Option already existed", HttpStatus.BAD_REQUEST),
-    OPTION_NOT_FOUND(7002, "Option not existed", HttpStatus.NOT_FOUND),
+    OPTION_EXISTED(7001, "Option already existed in this merchant", HttpStatus.BAD_REQUEST),
+    OPTION_NOT_FOUND(7002, "Option not existed in this merchant", HttpStatus.NOT_FOUND),
     OPTION_NAME_BLANK(7003, "Option name is required", HttpStatus.BAD_REQUEST),
     OPTION_REQUIRED_STATUS_NULL(7004, "Option required status is required", HttpStatus.BAD_REQUEST),
     OPTION_VALUES_EMPTY(7005, "Option value set is required", HttpStatus.BAD_REQUEST),
@@ -74,6 +74,19 @@ public enum ErrorCode {
             "Option value's extra price must be greater than or equal to 0",
             HttpStatus.BAD_REQUEST
     ),
+
+    // MENU ITEM ERROR
+    MENU_ITEM_EXISTED(8001, "Menu item already existed in this merchant", HttpStatus.BAD_REQUEST),
+    MENU_ITEM_NOT_FOUND(8002, "Menu item not existed in this merchant", HttpStatus.NOT_FOUND),
+    MENU_ITEM_NAME_BLANK(8003, "Menu item name is required", HttpStatus.BAD_REQUEST),
+    MENU_ITEM_PRICE_NULL(8004, "Menu item base price is required", HttpStatus.BAD_REQUEST),
+    MENU_ITEM_PRICE_NEG_OR_ZERO(
+            8005,
+            "Menu item's base price must be greater than or equal to 0",
+            HttpStatus.BAD_REQUEST
+    ),
+    MENU_ITEM_FILE_NULL(8006, "Menu item file is required", HttpStatus.BAD_REQUEST),
+    MENU_ITEM_CATEGORY_NULL(8007, "Menu item's category is required", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;
