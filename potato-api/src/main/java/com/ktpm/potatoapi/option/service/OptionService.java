@@ -15,7 +15,4 @@ public interface OptionService {
     void assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request);
     void deleteOptionValue(Long valueId);
     void deleteOption(Long optionId);
-
-    // services for Customer
-    List<OptionResponse> getAllOptionsForCustomer(Long merchantId);
 }

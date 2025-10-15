@@ -6,7 +6,6 @@ import com.ktpm.potatoapi.common.utils.SecurityUtils;
 import com.ktpm.potatoapi.menu.entity.MenuItem;
 import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
-import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
 import com.ktpm.potatoapi.option.dto.*;
 import com.ktpm.potatoapi.option.entity.Option;
 import com.ktpm.potatoapi.option.entity.OptionValue;
@@ -34,7 +33,6 @@ public class OptionServiceImpl implements OptionService {
     OptionMapper optionMapper;
     OptionValueMapper optionValueMapper;
     SecurityUtils securityUtils;
-    MerchantRepository merchantRepository;
     OptionValueRepository optionValueRepository;
     MenuItemRepository menuItemRepository;
 
@@ -42,22 +40,6 @@ public class OptionServiceImpl implements OptionService {
     public List<OptionResponse> getAllOptionsOfMyMerchant() {
         log.info("Get all options for Merchant Admin");
         return optionRepository.findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId())
-                .stream()
-                .map(optionMapper::toResponse)
-                .toList();
-    }
-
-    @Override
-    public List<OptionResponse> getAllOptionsForCustomer(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
-
-        if (!merchant.isOpen())
-            throw new AppException(ErrorCode.MERCHANT_CLOSED);
-
-        log.info("Get all options for Customer");
-
-        return optionRepository.findAllByMerchantIdAndIsVisibleTrue(merchantId)
                 .stream()
                 .map(optionMapper::toResponse)
                 .toList();

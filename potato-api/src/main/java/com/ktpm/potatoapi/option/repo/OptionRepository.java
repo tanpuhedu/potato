@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Optional;
 
 public interface OptionRepository extends JpaRepository<Option, Long> {
-    List<Option> findAllByMerchantIdAndIsVisibleTrue(Long merchantId);
     List<Option> findAllByMerchantIdAndIsActiveTrue(Long merchantId);
     Optional<Option> findByIdAndIsActiveTrue(Long optionId);
 }

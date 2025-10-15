@@ -95,11 +95,4 @@ public class OptionController {
         optionService.deleteOption(optionId);
         return ResponseEntity.ok().build();
     }
-
-    @GetMapping("/merchants/{merchantId}/options")
-    @Operation(summary = "Show all options of a merchant",
-            description = "API for Customer to retrieve a list of all active options of a merchant")
-    public ResponseEntity<?> getAllActiveOptions(@PathVariable Long merchantId) {
-        return ResponseEntity.ok(optionService.getAllOptionsForCustomer(merchantId));
-    }
 }
