@@ -1,5 +1,6 @@
 package com.ktpm.potatoapi.option.controller;
 
+import com.ktpm.potatoapi.option.dto.AddMenuItemToOptionRequest;
 import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
 import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
 import com.ktpm.potatoapi.option.dto.OptionValueRequest;
@@ -67,6 +68,15 @@ public class OptionController {
     public ResponseEntity<?> updateOptionValueVisibleStatus(@PathVariable Long valueId,
                                                             @RequestParam boolean isVisible) {
         optionService.updateOptionValueVisibleStatus(valueId, isVisible);
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("/merchant/options/{optionId}/assign-menu-items")
+    @Operation(summary = "Assign menu items to an existing option",
+            description = "API for Merchant Admin to assign menu items to an existing option")
+    public ResponseEntity<?> assignMenuItemToOption(@PathVariable Long optionId,
+                                                    @RequestBody AddMenuItemToOptionRequest request) {
+        optionService.assignMenuItemToOption(optionId, request);
         return ResponseEntity.ok().build();
     }
 

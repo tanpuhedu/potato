@@ -3,12 +3,11 @@ package com.ktpm.potatoapi.option.service;
 import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.common.utils.SecurityUtils;
+import com.ktpm.potatoapi.menu.entity.MenuItem;
+import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
-import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
-import com.ktpm.potatoapi.option.dto.OptionResponse;
-import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
-import com.ktpm.potatoapi.option.dto.OptionValueRequest;
+import com.ktpm.potatoapi.option.dto.*;
 import com.ktpm.potatoapi.option.entity.Option;
 import com.ktpm.potatoapi.option.entity.OptionValue;
 import com.ktpm.potatoapi.option.mapper.OptionMapper;
@@ -23,6 +22,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -36,6 +36,7 @@ public class OptionServiceImpl implements OptionService {
     SecurityUtils securityUtils;
     MerchantRepository merchantRepository;
     OptionValueRepository optionValueRepository;
+    MenuItemRepository menuItemRepository;
 
     @Override
     public List<OptionResponse> getAllOptionsOfMyMerchant() {
@@ -178,6 +179,21 @@ public class OptionServiceImpl implements OptionService {
         log.info("Update {}'s visible status", optionValue.getName());
     }
 
+    @Override
+    public void assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request) {
+        Option option = optionRepository.findByIdAndIsActiveTrue(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
+
+        List<MenuItem> menuItems =  menuItemRepository.findAllById(request.getMenuItemIds());
+
+        if (request.getMenuItemIds().size() != menuItems.size())
+            throw new AppException(ErrorCode.MENU_ITEM_NOT_FOUND);
+
+        option.setMenuItems(new ArrayList<>(menuItems));
+        optionRepository.save(option);
+    }
+
+    @Override
     public void deleteOptionValue(Long valueId) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
@@ -211,6 +227,7 @@ public class OptionServiceImpl implements OptionService {
         log.info("Delete option value {}", optionValue.getName());
     }
 
+    @Override
     public void deleteOption(Long optionId) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));

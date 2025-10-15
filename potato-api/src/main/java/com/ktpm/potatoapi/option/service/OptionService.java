@@ -1,9 +1,6 @@
 package com.ktpm.potatoapi.option.service;
 
-import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
-import com.ktpm.potatoapi.option.dto.OptionResponse;
-import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
-import com.ktpm.potatoapi.option.dto.OptionValueRequest;
+import com.ktpm.potatoapi.option.dto.*;
 
 import java.util.List;
 
@@ -15,6 +12,7 @@ public interface OptionService {
     void updateOption(Long optionId, OptionUpdateRequest request);
     void updateOptionValue(Long id, OptionValueRequest request);
     void updateOptionValueVisibleStatus(Long valueId, boolean isVisible);
+    void assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request);
     void deleteOptionValue(Long valueId);
     void deleteOption(Long optionId);
 

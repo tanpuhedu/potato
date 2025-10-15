@@ -1,10 +1,12 @@
 package com.ktpm.potatoapi.option.entity;
 
+import com.ktpm.potatoapi.menu.entity.MenuItem;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -31,9 +33,13 @@ public class Option {
     @OneToMany(mappedBy = "option", cascade = CascadeType.ALL, orphanRemoval = true)
     List<OptionValue> optionValues;
 
+    @ManyToMany
+    List<MenuItem> menuItems;
+
     @PrePersist
     protected void onCreate() {
         this.isActive = true;
         this.isVisible = true;
+        this.menuItems = new ArrayList<>();
     }
 }
