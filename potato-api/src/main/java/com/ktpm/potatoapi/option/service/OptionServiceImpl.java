@@ -173,6 +173,8 @@ public class OptionServiceImpl implements OptionService {
 
         option.setMenuItems(new ArrayList<>(menuItems));
         optionRepository.save(option);
+
+        log.info("Assign menu item(s) to option: {}", option.getName());
     }
 
     @Override
@@ -217,11 +219,15 @@ public class OptionServiceImpl implements OptionService {
         option.setActive(false);
         option.setVisible(false);
 
+        // deactivate các value của option này
         List<OptionValue> optionValues = option.getOptionValues();
         for (OptionValue optionValue : optionValues) {
             optionValue.setActive(false);
             optionValue.setVisible(false);
         }
+
+        // xóa liên kết với các menu item của option này
+        option.getMenuItems().clear();
 
         optionRepository.save(option);
 

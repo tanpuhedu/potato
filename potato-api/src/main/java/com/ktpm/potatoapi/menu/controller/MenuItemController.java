@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Menu item Controller", description = "APIs for menu item")
+@Tag(name = "Menu Item Controller", description = "APIs for menu item")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class MenuItemController {
     MenuItemService menuItemService;
