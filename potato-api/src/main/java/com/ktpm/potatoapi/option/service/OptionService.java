@@ -7,6 +7,7 @@ import java.util.List;
 public interface OptionService {
     // services for Merchant Admin
     List<OptionResponse> getAllOptionsOfMyMerchant();
+    OptionDetailResponse getOptionForMerAdmin(Long optionId);
     void createOptionAndOptionValue(OptionCreationRequest request);
     void createOptionValueForExistingOption(Long optionId, OptionValueRequest request);
     void updateOption(Long optionId, OptionUpdateRequest request);

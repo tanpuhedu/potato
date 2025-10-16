@@ -29,6 +29,13 @@ public class OptionController {
         return ResponseEntity.ok(optionService.getAllOptionsOfMyMerchant());
     }
 
+    @GetMapping("/merchant/options/{optionId}")
+    @Operation(summary = "Show an option for Merchant Admin",
+            description = "API for Merchant Admin to retrieve an option with associated menu items")
+    public ResponseEntity<?> getOptionForMerAdmin(@PathVariable Long optionId) {
+        return ResponseEntity.ok(optionService.getOptionForMerAdmin(optionId));
+    }
+
     @PostMapping("/merchant/options")
     @Operation(summary = "Create a new option and option values",
             description = "API for Merchant Admin to create a new option and its option value at once")

@@ -41,8 +41,16 @@ public class OptionServiceImpl implements OptionService {
         log.info("Get all options for Merchant Admin");
         return optionRepository.findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId())
                 .stream()
-                .map(optionMapper::toResponse)
+                .map(optionMapper::toOptionResponse)
                 .toList();
+    }
+
+    @Override
+    public OptionDetailResponse getOptionForMerAdmin(Long optionId) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
+
+        return optionMapper.toOptionDetailResponse(option);
     }
 
     @Override
