@@ -3,12 +3,10 @@ package com.ktpm.potatoapi.option.service;
 import com.ktpm.potatoapi.common.exception.AppException;
 import com.ktpm.potatoapi.common.exception.ErrorCode;
 import com.ktpm.potatoapi.common.utils.SecurityUtils;
+import com.ktpm.potatoapi.menu.entity.MenuItem;
+import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
-import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
-import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
-import com.ktpm.potatoapi.option.dto.OptionResponse;
-import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
-import com.ktpm.potatoapi.option.dto.OptionValueRequest;
+import com.ktpm.potatoapi.option.dto.*;
 import com.ktpm.potatoapi.option.entity.Option;
 import com.ktpm.potatoapi.option.entity.OptionValue;
 import com.ktpm.potatoapi.option.mapper.OptionMapper;
@@ -23,6 +21,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -34,32 +33,24 @@ public class OptionServiceImpl implements OptionService {
     OptionMapper optionMapper;
     OptionValueMapper optionValueMapper;
     SecurityUtils securityUtils;
-    MerchantRepository merchantRepository;
     OptionValueRepository optionValueRepository;
+    MenuItemRepository menuItemRepository;
 
     @Override
     public List<OptionResponse> getAllOptionsOfMyMerchant() {
         log.info("Get all options for Merchant Admin");
         return optionRepository.findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId())
                 .stream()
-                .map(optionMapper::toResponse)
+                .map(optionMapper::toOptionResponse)
                 .toList();
     }
 
     @Override
-    public List<OptionResponse> getAllOptionsForCustomer(Long merchantId) {
-        Merchant merchant = merchantRepository.findById(merchantId)
-                .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
+    public OptionDetailResponse getOptionForMerAdmin(Long optionId) {
+        Option option = optionRepository.findById(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
-        if (!merchant.isOpen())
-            throw new AppException(ErrorCode.MERCHANT_CLOSED);
-
-        log.info("Get all options for Customer");
-
-        return optionRepository.findAllByMerchantIdAndIsVisibleTrue(merchantId)
-                .stream()
-                .map(optionMapper::toResponse)
-                .toList();
+        return optionMapper.toOptionDetailResponse(option);
     }
 
     @Override
@@ -178,6 +169,23 @@ public class OptionServiceImpl implements OptionService {
         log.info("Update {}'s visible status", optionValue.getName());
     }
 
+    @Override
+    public void assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request) {
+        Option option = optionRepository.findByIdAndIsActiveTrue(optionId)
+                .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
+
+        List<MenuItem> menuItems =  menuItemRepository.findAllById(request.getMenuItemIds());
+
+        if (request.getMenuItemIds().size() != menuItems.size())
+            throw new AppException(ErrorCode.MENU_ITEM_NOT_FOUND);
+
+        option.setMenuItems(new ArrayList<>(menuItems));
+        optionRepository.save(option);
+
+        log.info("Assign menu item(s) to option: {}", option.getName());
+    }
+
+    @Override
     public void deleteOptionValue(Long valueId) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
@@ -211,6 +219,7 @@ public class OptionServiceImpl implements OptionService {
         log.info("Delete option value {}", optionValue.getName());
     }
 
+    @Override
     public void deleteOption(Long optionId) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
@@ -218,11 +227,15 @@ public class OptionServiceImpl implements OptionService {
         option.setActive(false);
         option.setVisible(false);
 
+        // deactivate các value của option này
         List<OptionValue> optionValues = option.getOptionValues();
         for (OptionValue optionValue : optionValues) {
             optionValue.setActive(false);
             optionValue.setVisible(false);
         }
+
+        // xóa liên kết với các menu item của option này
+        option.getMenuItems().clear();
 
         optionRepository.save(option);
 

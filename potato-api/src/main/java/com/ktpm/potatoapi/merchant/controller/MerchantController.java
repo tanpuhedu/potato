@@ -90,7 +90,6 @@ public class MerchantController {
         return ResponseEntity.ok().build();
     }
 
-
     @PatchMapping("/merchant/my-merchant/isOpen")
     @Operation(summary = "Update my merchant's open status",
             description = "API for Merchant Admin to update their own merchant's open status")

@@ -14,6 +14,8 @@ import com.ktpm.potatoapi.menu.mapper.MenuItemMapper;
 import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
+import com.ktpm.potatoapi.option.entity.Option;
+import com.ktpm.potatoapi.option.repo.OptionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -35,6 +37,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     CategoryRepository categoryRepository;
     CloudinaryService cloudinaryService;
     SecurityUtils securityUtils;
+    OptionRepository optionRepository;
 
     @Override
     public List<MenuItemResponse> getAllMenuItemsOfMyMerchant() {
@@ -128,6 +131,7 @@ public class MenuItemServiceImpl implements MenuItemService {
         menuItemRepository.save(menuItem);
     }
 
+    // thiếu xóa món ăn thì xóa liên kết với option
     @Override
     public void deleteMenuItem(Long menuItemId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
@@ -138,6 +142,13 @@ public class MenuItemServiceImpl implements MenuItemService {
         // Check menu item must be owned of current merchant
         if(!menuItem.getMerchant().equals(merchant))
             throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
+        // Remove the menu item from all associated options
+        List<Option> options = optionRepository.findAllByMenuItemsContaining(menuItem);
+        for (Option option : options) {
+            option.getMenuItems().remove(menuItem);
+        }
+        optionRepository.saveAll(options);
 
         menuItem.setVisible(false);
         menuItem.setActive(false);

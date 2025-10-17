@@ -1,5 +1,6 @@
 package com.ktpm.potatoapi.option.controller;
 
+import com.ktpm.potatoapi.option.dto.AddMenuItemToOptionRequest;
 import com.ktpm.potatoapi.option.dto.OptionCreationRequest;
 import com.ktpm.potatoapi.option.dto.OptionUpdateRequest;
 import com.ktpm.potatoapi.option.dto.OptionValueRequest;
@@ -26,6 +27,13 @@ public class OptionController {
             description = "API for Merchant Admin to retrieve a list of all options")
     public ResponseEntity<?> getAllOptionsForMerAdmin() {
         return ResponseEntity.ok(optionService.getAllOptionsOfMyMerchant());
+    }
+
+    @GetMapping("/merchant/options/{optionId}")
+    @Operation(summary = "Show an option for Merchant Admin",
+            description = "API for Merchant Admin to retrieve an option with associated menu items")
+    public ResponseEntity<?> getOptionForMerAdmin(@PathVariable Long optionId) {
+        return ResponseEntity.ok(optionService.getOptionForMerAdmin(optionId));
     }
 
     @PostMapping("/merchant/options")
@@ -70,6 +78,15 @@ public class OptionController {
         return ResponseEntity.ok().build();
     }
 
+    @PostMapping("/merchant/options/{optionId}/assign-menu-items")
+    @Operation(summary = "Assign menu items to an existing option",
+            description = "API for Merchant Admin to assign menu items to an existing option")
+    public ResponseEntity<?> assignMenuItemToOption(@PathVariable Long optionId,
+                                                    @RequestBody AddMenuItemToOptionRequest request) {
+        optionService.assignMenuItemToOption(optionId, request);
+        return ResponseEntity.ok().build();
+    }
+
     @DeleteMapping("/merchant/options/values/{valueId}")
     @Operation(summary = "Delete option value",
             description = "API for Merchant Admin to delete option value")
@@ -84,12 +101,5 @@ public class OptionController {
     public ResponseEntity<?> deleteOption(@PathVariable Long optionId) {
         optionService.deleteOption(optionId);
         return ResponseEntity.ok().build();
-    }
-
-    @GetMapping("/merchants/{merchantId}/options")
-    @Operation(summary = "Show all options of a merchant",
-            description = "API for Customer to retrieve a list of all active options of a merchant")
-    public ResponseEntity<?> getAllActiveOptions(@PathVariable Long merchantId) {
-        return ResponseEntity.ok(optionService.getAllOptionsForCustomer(merchantId));
     }
 }
