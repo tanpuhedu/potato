@@ -1,6 +1,7 @@
 package com.ktpm.potatoapi.order.controller;
 
 import com.ktpm.potatoapi.order.dto.OrderRequest;
+import com.ktpm.potatoapi.order.dto.OrderStatusUpdateRequest;
 import com.ktpm.potatoapi.order.service.OrderService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,5 +32,28 @@ public class OrderController {
             description = "API for Customer to retrieve a list of orders")
     public ResponseEntity<?> getAllOrdersOfCustomer() {
         return ResponseEntity.ok(orderService.getAllOrdersOfCustomer());
+    }
+
+    @GetMapping("/merchant/my-orders")
+    @Operation(summary = "Show all orders of Merchant",
+            description = "API for Merchant Admin to retrieve a list of all orders from Customer")
+    public ResponseEntity<?> getAllOrdersOfMerchant() {
+        return ResponseEntity.ok(orderService.getAllOrdersOfMyMerchant());
+    }
+
+    @GetMapping(path = {"/orders/{orderId}", "merchant/orders/{orderId}"})
+    @Operation(summary = "Show detail of order",
+            description = "API for both Customer and Merchant Admin to show detail of an order")
+    public ResponseEntity<?> getOrderDetail(@PathVariable Long orderId) {
+        return ResponseEntity.ok(orderService.getOrderDetail(orderId));
+    }
+
+    @PatchMapping("/merchant/order/{orderId}")
+    @Operation(summary = "Update status of an order",
+            description = "API for Merchant Admin to update status of an order")
+    public ResponseEntity<?> updateStatusOfOrder(@PathVariable Long orderId,
+                                                 @RequestBody @Valid OrderStatusUpdateRequest request) {
+        orderService.updateStatusOrder(orderId, request);
+        return ResponseEntity.ok().build();
     }
 }

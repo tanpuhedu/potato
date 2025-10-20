@@ -101,6 +101,16 @@ public enum ErrorCode {
             "Order has more than 1 option values for a required option",
             HttpStatus.BAD_REQUEST
     ),
+    ORDER_NOT_FOUND(9006, "Order not existed", HttpStatus.NOT_FOUND),
+    ORDER_STATUS_INVALID_FOR_UPDATE(9007, "Cannot update a canceled order", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_REQUEST_INVALID(9008, "Invalid order status in request", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_INVALID_FOR_CANCEL(
+            9009,
+            "The order can only be canceled when status is CONFIRMED",
+            HttpStatus.BAD_REQUEST
+    ),
+    ORDER_STATUS_NOT_STEP_BY_STEP(9010, "Order status must be step by step", HttpStatus.BAD_REQUEST),
+    CANCEL_REASON_EMPTY(9011, "A reason is required when canceling an order", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;

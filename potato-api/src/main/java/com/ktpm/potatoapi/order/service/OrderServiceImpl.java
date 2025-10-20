@@ -10,13 +10,11 @@ import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.option.entity.Option;
 import com.ktpm.potatoapi.option.entity.OptionValue;
 import com.ktpm.potatoapi.option.repo.OptionValueRepository;
-import com.ktpm.potatoapi.order.dto.OrderItemOptionValueResponse;
-import com.ktpm.potatoapi.order.dto.OrderItemResponse;
-import com.ktpm.potatoapi.order.dto.OrderRequest;
-import com.ktpm.potatoapi.order.dto.OrderResponse;
+import com.ktpm.potatoapi.order.dto.*;
 import com.ktpm.potatoapi.order.entity.Order;
 import com.ktpm.potatoapi.order.entity.OrderItem;
 import com.ktpm.potatoapi.order.entity.OrderItemOptionValue;
+import com.ktpm.potatoapi.order.entity.OrderStatus;
 import com.ktpm.potatoapi.order.mapper.OrderItemMapper;
 import com.ktpm.potatoapi.order.mapper.OrderItemOptionValueMapper;
 import com.ktpm.potatoapi.order.mapper.OrderMapper;
@@ -90,6 +88,76 @@ public class OrderServiceImpl implements OrderService {
             orderResponses.add(orderResponse);
         }
         return orderResponses;
+    }
+
+    @Override
+    public OrderResponse getOrderDetail(Long orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        List<OrderItemResponse> orderItemResponses = mapOrderItemsWithOptionValuesToResponse(order.getOrderItems());
+
+        OrderResponse orderResponse = orderMapper.toResponse(order);
+        orderResponse.setOrderItems(orderItemResponses);
+        return orderResponse;
+    }
+
+    @Override
+    public List<OrderResponse> getAllOrdersOfMyMerchant() {
+        Merchant merchant = securityUtils.getCurrentMerchant();
+        return orderRepository.findAllByMerchant(merchant)
+                .stream()
+                .map(order -> {
+                    List<OrderItemResponse> orderItemResponses =
+                            mapOrderItemsWithOptionValuesToResponse(order.getOrderItems());
+
+                    OrderResponse orderResponse = orderMapper.toResponse(order);
+                    orderResponse.setOrderItems(orderItemResponses);
+
+                    return orderResponse;
+                })
+                .toList();
+    }
+
+    @Override
+    public void updateStatusOrder(Long orderId, OrderStatusUpdateRequest request) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
+
+        // validate merchant ownership
+        Merchant merchant = securityUtils.getCurrentMerchant();
+        if (!order.getMerchant().equals(merchant))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
+        // parse order status request
+        OrderStatus newStatus;
+        try {
+            newStatus = OrderStatus.valueOf(request.getStatus().toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new AppException(ErrorCode.ORDER_STATUS_REQUEST_INVALID);
+        }
+
+        // if current status is CANCELED, then it is not updatable
+        OrderStatus currentStatus = order.getStatus();
+        if (currentStatus == OrderStatus.CANCELED)
+            throw new AppException(ErrorCode.ORDER_STATUS_INVALID_FOR_UPDATE);
+
+        // handle order status progress
+        if (newStatus.getLevel() != currentStatus.getLevel() + 1)
+            throw new AppException(ErrorCode.ORDER_STATUS_NOT_STEP_BY_STEP);
+
+        // handle case: cancel order
+        if (newStatus == OrderStatus.CANCELED) {
+            if((request.getCancelReason() == null) || (request.getCancelReason().isBlank()))
+                throw new AppException(ErrorCode.CANCEL_REASON_EMPTY);
+
+            order.setCancelReason(request.getCancelReason());
+        }
+
+        order.setStatus(newStatus);
+        orderRepository.save(order);
+
+        log.info("Updated {} status: {} successfully", order.getId(), newStatus);
     }
 
     private Merchant getMerchantFromMenuItemId(Long menuItemId) {
