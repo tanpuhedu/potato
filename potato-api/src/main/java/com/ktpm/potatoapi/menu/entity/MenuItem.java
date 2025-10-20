@@ -2,9 +2,12 @@ package com.ktpm.potatoapi.menu.entity;
 
 import com.ktpm.potatoapi.category.entity.Category;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
+import com.ktpm.potatoapi.option.entity.Option;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Entity
 @Getter
@@ -30,6 +33,9 @@ public class MenuItem {
 
     @ManyToOne
     Category category;
+
+    @ManyToMany(mappedBy = "menuItems")
+    List<Option> options;
 
     @PrePersist
     protected void onCreate() {

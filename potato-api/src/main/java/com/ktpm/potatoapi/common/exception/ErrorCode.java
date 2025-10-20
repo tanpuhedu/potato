@@ -67,10 +67,11 @@ public enum ErrorCode {
     OPTION_REQUIRED_STATUS_NULL(7004, "Option required status is required", HttpStatus.BAD_REQUEST),
     OPTION_VALUES_EMPTY(7005, "Option value set is required", HttpStatus.BAD_REQUEST),
     OPTION_VALUE_EXISTED(7006, "Option value already existed", HttpStatus.BAD_REQUEST),
-    OPTION_VALUE_NOT_FOUND(7007, "Option value not existed", HttpStatus.NOT_FOUND),
-    OPTION_VALUE_NAME_BLANK(7008, "Option value name is required", HttpStatus.BAD_REQUEST),
+    OPTION_VALUE_INVISIBLE(7007, "Option value is invisible", HttpStatus.BAD_REQUEST),
+    OPTION_VALUE_NOT_FOUND(7008, "Option value not existed", HttpStatus.NOT_FOUND),
+    OPTION_VALUE_NAME_BLANK(7009, "Option value name is required", HttpStatus.BAD_REQUEST),
     OPTION_VALUE_EXTRA_PRICE_NEGATIVE(
-            7009,
+            7010,
             "Option value's extra price must be greater than or equal to 0",
             HttpStatus.BAD_REQUEST
     ),
@@ -87,6 +88,29 @@ public enum ErrorCode {
     ),
     MENU_ITEM_FILE_NULL(8006, "Menu item file is required", HttpStatus.BAD_REQUEST),
     MENU_ITEM_CATEGORY_NULL(8007, "Menu item's category is required", HttpStatus.BAD_REQUEST),
+    MENU_ITEM_INVISIBLE(8008, "Menu item is invisible", HttpStatus.BAD_REQUEST),
+    MENU_ITEM_NOT_ASSIGNED_TO_OPTION(8009, "Menu item is not assigned to this option", HttpStatus.BAD_REQUEST),
+
+    // ORDER ERROR
+    ORDER_FULL_NAME_BLANK(9001, "Customer's full name is required", HttpStatus.BAD_REQUEST),
+    ORDER_PHONE_BLANK(9002, "Customer's phone number is required", HttpStatus.BAD_REQUEST),
+    ORDER_DELIVERY_ADDRESS(9003, "Customer's delivery address is required", HttpStatus.BAD_REQUEST),
+    ORDER_CART_ITEMS_EMPTY(9004, "List of cart items is required", HttpStatus.BAD_REQUEST),
+    ORDER_HAS_MULTIPLE_OPTION_VALUES_FOR_REQUIRED_OPTION(
+            9005,
+            "Order has more than 1 option values for a required option",
+            HttpStatus.BAD_REQUEST
+    ),
+    ORDER_NOT_FOUND(9006, "Order not existed", HttpStatus.NOT_FOUND),
+    ORDER_STATUS_INVALID_FOR_UPDATE(9007, "Cannot update a canceled order", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_REQUEST_INVALID(9008, "Invalid order status in request", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_INVALID_FOR_CANCEL(
+            9009,
+            "The order can only be canceled when status is CONFIRMED",
+            HttpStatus.BAD_REQUEST
+    ),
+    ORDER_STATUS_NOT_STEP_BY_STEP(9010, "Order status must be step by step", HttpStatus.BAD_REQUEST),
+    CANCEL_REASON_EMPTY(9011, "A reason is required when canceling an order", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;

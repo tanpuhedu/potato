@@ -34,7 +34,12 @@ public class Option {
     List<OptionValue> optionValues;
 
     @ManyToMany
+    @JoinTable(
+            joinColumns = @JoinColumn(name = "option_id"),
+            inverseJoinColumns = @JoinColumn(name = "menu_item_id")
+    )
     List<MenuItem> menuItems;
+
 
     @PrePersist
     protected void onCreate() {
