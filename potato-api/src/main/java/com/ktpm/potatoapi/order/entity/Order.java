@@ -1,6 +1,7 @@
 package com.ktpm.potatoapi.order.entity;
 
 import com.ktpm.potatoapi.common.utils.OrderCodeUtils;
+import com.ktpm.potatoapi.common.utils.PhoneUtils;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.user.entity.User;
 import jakarta.persistence.*;
@@ -50,6 +51,7 @@ public class Order {
     @PrePersist
     protected void onCreate() {
         this.code = OrderCodeUtils.generateOrderCode();
+        this.phone = PhoneUtils.formatPhoneNumber(this.phone);
         this.createdAt = LocalDateTime.now();
         this.updatedAt = null;
         this.status = OrderStatus.CONFIRMED;
