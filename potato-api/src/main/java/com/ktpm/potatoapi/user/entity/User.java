@@ -24,11 +24,4 @@ public class User {
 
     @Enumerated(EnumType.STRING)
     Role role;
-
-    boolean isDeleted;
-
-    @PrePersist
-    protected void onCreate() {
-        this.isDeleted = false;
-    }
 }
