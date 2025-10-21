@@ -102,7 +102,7 @@ public enum ErrorCode {
             HttpStatus.BAD_REQUEST
     ),
     ORDER_NOT_FOUND(9006, "Order not existed", HttpStatus.NOT_FOUND),
-    ORDER_STATUS_INVALID_FOR_UPDATE(9007, "Cannot update a canceled order", HttpStatus.BAD_REQUEST),
+    ORDER_STATUS_INVALID_FOR_UPDATE(9007, "Cannot update a canceled/completed order", HttpStatus.BAD_REQUEST),
     ORDER_STATUS_REQUEST_INVALID(9008, "Invalid order status in request", HttpStatus.BAD_REQUEST),
     ORDER_STATUS_INVALID_FOR_CANCEL(
             9009,

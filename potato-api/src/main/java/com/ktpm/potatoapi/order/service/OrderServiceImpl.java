@@ -137,14 +137,10 @@ public class OrderServiceImpl implements OrderService {
             throw new AppException(ErrorCode.ORDER_STATUS_REQUEST_INVALID);
         }
 
-        // if current status is CANCELED, then it is not updatable
+        // if current status is CANCELED or COMPLETED, then it is not updatable
         OrderStatus currentStatus = order.getStatus();
-        if (currentStatus == OrderStatus.CANCELED)
+        if (currentStatus == OrderStatus.CANCELED || currentStatus == OrderStatus.COMPLETED)
             throw new AppException(ErrorCode.ORDER_STATUS_INVALID_FOR_UPDATE);
-
-        // handle order status progress
-        if (newStatus.getLevel() != currentStatus.getLevel() + 1)
-            throw new AppException(ErrorCode.ORDER_STATUS_NOT_STEP_BY_STEP);
 
         // handle case: cancel order
         if (newStatus == OrderStatus.CANCELED) {
@@ -153,6 +149,10 @@ public class OrderServiceImpl implements OrderService {
 
             order.setCancelReason(request.getCancelReason());
         }
+
+        // handle order status progress
+        if (newStatus.getLevel() != currentStatus.getLevel() + 1)
+            throw new AppException(ErrorCode.ORDER_STATUS_NOT_STEP_BY_STEP);
 
         order.setStatus(newStatus);
         orderRepository.save(order);
