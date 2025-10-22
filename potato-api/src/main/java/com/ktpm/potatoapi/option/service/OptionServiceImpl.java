@@ -174,7 +174,7 @@ public class OptionServiceImpl implements OptionService {
         Option option = optionRepository.findByIdAndIsActiveTrue(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
-        List<MenuItem> menuItems =  menuItemRepository.findAllById(request.getMenuItemIds());
+        List<MenuItem> menuItems =  menuItemRepository.findAllByIdInAndIsActiveTrue(request.getMenuItemIds());
 
         if (request.getMenuItemIds().size() != menuItems.size())
             throw new AppException(ErrorCode.MENU_ITEM_NOT_FOUND);

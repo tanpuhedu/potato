@@ -1,8 +1,11 @@
 package com.ktpm.potatoapi.menu.dto;
 
 import com.ktpm.potatoapi.category.dto.CategoryResponse;
+import com.ktpm.potatoapi.option.dto.OptionResponse;
 import lombok.*;
 import lombok.experimental.FieldDefaults;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -16,4 +19,5 @@ public class MenuItemDetailResponse {
     String description;
     Long basePrice;
     String imgUrl;
+    List<OptionResponse> options;
 }
