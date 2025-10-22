@@ -68,7 +68,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public MenuItemDetailResponse getMenuItemForMerAdmin(Long menuItemId) {
+    public MenuItemDetailResponse getMenuItem(Long menuItemId) {
         MenuItem menuItem = menuItemRepository.findByIdAndIsActiveTrue(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 

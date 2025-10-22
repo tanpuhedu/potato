@@ -26,11 +26,11 @@ public class MenuItemController {
         return ResponseEntity.ok(menuItemService.getAllMenuItemsOfMyMerchant());
     }
 
-    @GetMapping(path = "/merchant/menu-items/{menuItemId}")
-    @Operation(summary = "Show a menu item for Merchant Admin",
-            description = "API for Merchant Admin to retrieve a specific menu item")
-    public ResponseEntity<?> getMenuItemForMerAdmin(@PathVariable Long menuItemId) {
-        return ResponseEntity.ok(menuItemService.getMenuItemForMerAdmin(menuItemId));
+    @GetMapping(path = {"/merchant/menu-items/{menuItemId}", "/menu-items/{menuItemId}"})
+    @Operation(summary = "Show a menu item for Merchant Admin and Customer",
+            description = "API for Merchant Admin and Customer to retrieve a specific menu item")
+    public ResponseEntity<?> getMenuItem(@PathVariable Long menuItemId) {
+        return ResponseEntity.ok(menuItemService.getMenuItem(menuItemId));
     }
 
     @PostMapping(path = "/merchant/menu-items", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
