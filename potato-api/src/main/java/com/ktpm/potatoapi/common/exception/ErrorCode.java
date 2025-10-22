@@ -111,6 +111,14 @@ public enum ErrorCode {
     ),
     ORDER_STATUS_NOT_STEP_BY_STEP(9010, "Order status must be step by step", HttpStatus.BAD_REQUEST),
     CANCEL_REASON_EMPTY(9011, "A reason is required when canceling an order", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_COMPLETED(9012, "The order has not been completed to rate", HttpStatus.BAD_REQUEST),
+    ORDER_NOT_OWNED_BY_CURRENT_USER(9013, "The order is not owned by this user", HttpStatus.BAD_REQUEST),
+    ORDER_RATED(9014, "This order is already rated", HttpStatus.BAD_REQUEST),
+
+    // RATING ERROR,
+    RATING_ORDER_NULL(10001, "Order is required for rating", HttpStatus.BAD_REQUEST),
+    RATING_NULL(10002, "Rating value is required", HttpStatus.BAD_REQUEST),
+    RATING_OUT_OF_RANGE(10003, "Rating value must be in the range of {min} to {max}", HttpStatus.BAD_REQUEST),
     ;
 
     private final int code;
