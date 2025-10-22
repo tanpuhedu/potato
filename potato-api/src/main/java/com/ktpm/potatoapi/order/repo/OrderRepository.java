@@ -10,4 +10,5 @@ import java.util.List;
 public interface OrderRepository extends JpaRepository<Order, Long> {
     List<Order> findAllByCustomer(User customer);
     List<Order> findAllByMerchant(Merchant merchant);
+    boolean existsByIdAndCustomerId(Long id, Long customerId);
 }
