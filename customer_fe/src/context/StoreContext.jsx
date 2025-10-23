@@ -11,7 +11,7 @@ const StoreContextProvide = (props) => {
 
   return (
     <StoreContext.Provider value={contextValue}>
-      {props.children}
+      {props.children} 
     </StoreContext.Provider>
   );
 };
