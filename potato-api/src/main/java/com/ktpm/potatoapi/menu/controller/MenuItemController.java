@@ -37,8 +37,7 @@ public class MenuItemController {
     @Operation(summary = "Create a new menu item",
             description = "API for Merchant Admin to create a new menu item")
     public ResponseEntity<?> createMenuItem(@ModelAttribute @Valid MenuItemRequest request) {
-        menuItemService.createMenuItem(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(menuItemService.createMenuItem(request));
     }
 
     @PutMapping(path = "/merchant/menu-items/{menuItemId}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -46,8 +45,7 @@ public class MenuItemController {
             description = "API for Merchant Admin to update menu item")
     public ResponseEntity<?> updateMenuItem(@PathVariable Long menuItemId,
                                             @ModelAttribute @Valid MenuItemRequest request) {
-        menuItemService.updateMenuItem(menuItemId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(menuItemService.updateMenuItem(menuItemId, request));
     }
 
     @PatchMapping(path = "/merchant/menu-items/{menuItemId}/isVisible")
@@ -55,8 +53,7 @@ public class MenuItemController {
             description = "API for Merchant Admin to update menu item's visible status")
     public ResponseEntity<?> updateMenuItemVisibleStatus(@PathVariable Long menuItemId,
                                                          @RequestParam boolean isVisible) {
-        menuItemService.updateMenuItemVisibleStatus(menuItemId, isVisible);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(menuItemService.updateMenuItemVisibleStatus(menuItemId, isVisible));
     }
 
     @DeleteMapping(path = "/merchant/menu-items/{menuItemId}")

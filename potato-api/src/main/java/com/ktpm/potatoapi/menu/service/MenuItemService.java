@@ -9,9 +9,9 @@ import java.util.List;
 public interface MenuItemService {
     // services for Merchant Admin
     List<MenuItemResponse> getAllMenuItemsOfMyMerchant();
-    void createMenuItem(MenuItemRequest menuItemRequest);
-    void updateMenuItem(Long menuItemId,MenuItemRequest menuItemRequest);
-    void updateMenuItemVisibleStatus(Long menuItemId, boolean isVisible);
+    MenuItemDetailResponse createMenuItem(MenuItemRequest menuItemRequest);
+    MenuItemDetailResponse updateMenuItem(Long menuItemId,MenuItemRequest menuItemRequest);
+    MenuItemResponse updateMenuItemVisibleStatus(Long menuItemId, boolean isVisible);
     void deleteMenuItem(Long menuItemId);
 
     // mutual service
