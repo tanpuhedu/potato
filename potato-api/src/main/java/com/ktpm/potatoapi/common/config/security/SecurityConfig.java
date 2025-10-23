@@ -30,7 +30,14 @@ public class SecurityConfig {
     String[] PUBLIC_ENDPOINTS = {
             "/auth/**", "/merchant/register",
             "/cuisine-types",
-            "/merchants/{merchantId}/categories", "/merchants", "/merchants/{id}"
+            "/merchants/{merchantId}/categories", "/merchants", "/merchants/{id}",
+            "/menu-items/{menuItemId}", "/merchants/{merchantId}/menu-items",
+            "/merchants", "/merchants/{id}"
+    };
+    String[] CUSTOMER_ENDPOINTS = {
+            "/cart",
+            "/check-out", "/my-orders", "/orders/{orderId}",
+            "/rating"
     };
 
     @Bean
@@ -39,7 +46,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authz -> authz
                         .requestMatchers(OPENAPI_ENDPOINTS).permitAll()
                         .requestMatchers(PUBLIC_ENDPOINTS).permitAll()
-                        .requestMatchers("/merchant/**").hasAuthority("MERCHANT_ADMIN")
+                        .requestMatchers(CUSTOMER_ENDPOINTS).hasAuthority("CUSTOMER")
+                        .requestMatchers("/merchant/**", "/account/change-password").hasAuthority("MERCHANT_ADMIN")
                         .requestMatchers("/admin/**").hasAuthority("SYSTEM_ADMIN")
                         .anyRequest().authenticated()
                 )
