@@ -34,9 +34,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponse> getAllCategoriesOfMyMerchant() {
+        List<Category> categories = categoryRepository
+                .findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId());
+
         log.info("Get all categories for Merchant Admin");
-        return categoryRepository.findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId())
-                .stream()
+
+        return categories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
     }
@@ -49,10 +52,11 @@ public class CategoryServiceImpl implements CategoryService {
         if (!merchant.isOpen())
             throw new AppException(ErrorCode.MERCHANT_CLOSED);
 
+        List<Category> categories = categoryRepository.findAllByMerchantIdAndIsActiveTrue(merchantId);
+
         log.info("Get all categories for Customer");
 
-        return categoryRepository.findAllByMerchantIdAndIsActiveTrue(merchantId)
-                .stream()
+        return categories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
     }
