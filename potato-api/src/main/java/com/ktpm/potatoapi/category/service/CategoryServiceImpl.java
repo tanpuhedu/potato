@@ -58,7 +58,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void createCategory(CategoryRequest categoryRequest) {
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         Merchant merchant = securityUtils.getCurrentMerchant();
 
         Category category = new Category();
@@ -67,14 +67,15 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
             categoryRepository.save(category);
-            log.info("Create category {}", category.getName());
+            log.info("{} created category {}", merchant.getName(), category.getName());
+            return categoryMapper.toResponse(category);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.CATEGORY_EXISTED);
         }
     }
 
     @Override
-    public void updateCategory(Long id, CategoryRequest categoryRequest) {
+    public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
         Category category = categoryRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
@@ -88,7 +89,9 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
             categoryRepository.save(category);
-            log.info("{} update category: {}", merchant.getName(), category.getName());
+            log.info("{} updated category: {}", merchant.getName(), category.getName());
+
+            return categoryMapper.toResponse(category);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.CATEGORY_EXISTED);
         }
@@ -111,6 +114,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         menuItemRepository.deleteByCategoryId(category.getId()); // xóa các menu item thuộc category này
 
-        log.info("{} delete {} and its menu items", merchant.getName(), category.getName());
+        log.info("{} deleted {} and its menu items", merchant.getName(), category.getName());
     }
 }
