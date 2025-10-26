@@ -55,7 +55,7 @@ public class OptionServiceImpl implements OptionService {
 
     @Override
     @Transactional
-    public void createOptionAndOptionValue(OptionCreationRequest optionRequest) {
+    public OptionResponse createOptionAndOptionValue(OptionCreationRequest optionRequest) {
         Option option = optionMapper.toEntity(optionRequest);
         option.setRequired(optionRequest.isRequired());
 
@@ -81,13 +81,15 @@ public class OptionServiceImpl implements OptionService {
             optionRepository.save(option);
             log.info("Create option '{}' for merchant {} with {} value(s)",
                     option.getName(), merchant.getName(), optionValues.size());
+
+            return optionMapper.toOptionResponse(option);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.OPTION_EXISTED);
         }
     }
 
     @Override
-    public void createOptionValueForExistingOption(Long optionId, OptionValueRequest request) {
+    public OptionResponse createOptionValueForExistingOption(Long optionId, OptionValueRequest request) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
@@ -104,13 +106,15 @@ public class OptionServiceImpl implements OptionService {
         try {
             optionValueRepository.save(optionValue);
             log.info("Create option value {} for option {}", optionValue.getName(), option.getName());
+
+            return optionMapper.toOptionResponse(option);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.OPTION_VALUE_EXISTED);
         }
     }
 
     @Override
-    public void updateOption(Long optionId, OptionUpdateRequest request) {
+    public OptionResponse updateOption(Long optionId, OptionUpdateRequest request) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
@@ -118,13 +122,15 @@ public class OptionServiceImpl implements OptionService {
         try {
             optionRepository.save(option);
             log.info("Update name of option {}", option.getName());
+
+            return optionMapper.toOptionResponse(option);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.OPTION_EXISTED);
         }
     }
 
     @Override
-    public void updateOptionValue(Long valueId, OptionValueRequest request) {
+    public OptionValueResponse updateOptionValue(Long valueId, OptionValueRequest request) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
 
@@ -133,14 +139,16 @@ public class OptionServiceImpl implements OptionService {
 
         try {
             optionValueRepository.save(optionValue);
-            log.info("Update option value {}", optionValue.getName());
+            log.info("Updated option value {}", optionValue.getName());
+
+            return optionValueMapper.toResponse(optionValue);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.OPTION_VALUE_EXISTED);
         }
     }
 
     @Override
-    public void updateOptionValueVisibleStatus(Long valueId, boolean isVisible) {
+    public OptionValueResponse updateOptionValueVisibleStatus(Long valueId, boolean isVisible) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
 
@@ -167,10 +175,12 @@ public class OptionServiceImpl implements OptionService {
         optionRepository.save(option);
 
         log.info("Update {}'s visible status", optionValue.getName());
+
+        return optionValueMapper.toResponse(optionValue);
     }
 
     @Override
-    public void assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request) {
+    public OptionDetailResponse assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request) {
         Option option = optionRepository.findByIdAndIsActiveTrue(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
@@ -183,6 +193,8 @@ public class OptionServiceImpl implements OptionService {
         optionRepository.save(option);
 
         log.info("Assign menu item(s) to option: {}", option.getName());
+
+        return optionMapper.toOptionDetailResponse(option);
     }
 
     @Override
