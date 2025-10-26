@@ -131,13 +131,17 @@ public class MenuItemServiceImpl implements MenuItemService {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 
+        // Check menu item must be owned of current merchant
+        Merchant merchant = securityUtils.getCurrentMerchant();
+        if (!merchant.equals(menuItem.getMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
         menuItem.setVisible(isVisible);
         menuItemRepository.save(menuItem);
 
         return menuItemMapper.toMenuItemResponse(menuItem);
     }
 
-    // thiếu xóa món ăn thì xóa liên kết với option
     @Override
     public void deleteMenuItem(Long menuItemId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
