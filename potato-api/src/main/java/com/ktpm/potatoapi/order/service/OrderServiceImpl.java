@@ -53,7 +53,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void createOrder(OrderRequest orderRequest) {
+    public OrderResponse createOrder(OrderRequest orderRequest) {
         User customer = userRepository.findByEmail(securityUtils.getCurrentUserEmail())
                 .orElseThrow(() -> new AppException(ErrorCode.USER_NOT_FOUND));
 
@@ -72,6 +72,11 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         log.info("Order from {} created", customer.getEmail());
+
+        List<OrderItemResponse> orderItemResponses = mapOrderItemsWithOptionValuesToResponse(order.getOrderItems());
+        OrderResponse orderResponse = orderMapper.toResponse(order);
+        orderResponse.setOrderItems(orderItemResponses);
+        return orderResponse;
     }
 
     @Override
@@ -120,7 +125,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void updateStatusOrder(Long orderId, OrderStatusUpdateRequest request) {
+    public OrderResponse updateStatusOrder(Long orderId, OrderStatusUpdateRequest request) {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new AppException(ErrorCode.ORDER_NOT_FOUND));
 
@@ -158,6 +163,11 @@ public class OrderServiceImpl implements OrderService {
         orderRepository.save(order);
 
         log.info("Updated {} status: {} successfully", order.getId(), newStatus);
+
+        List<OrderItemResponse> orderItemResponses = mapOrderItemsWithOptionValuesToResponse(order.getOrderItems());
+        OrderResponse orderResponse = orderMapper.toResponse(order);
+        orderResponse.setOrderItems(orderItemResponses);
+        return orderResponse;
     }
 
     private Merchant getMerchantFromMenuItemId(Long menuItemId) {

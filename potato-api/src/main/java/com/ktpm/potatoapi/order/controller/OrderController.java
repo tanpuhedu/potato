@@ -23,8 +23,7 @@ public class OrderController {
     @Operation(summary = "Create a new order",
             description = "API for Customer to create a order")
     public ResponseEntity<?> checkout(@RequestBody @Valid OrderRequest orderRequest) {
-        orderService.createOrder(orderRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(orderService.createOrder(orderRequest));
     }
 
     @GetMapping("/my-orders")
@@ -53,7 +52,6 @@ public class OrderController {
             description = "API for Merchant Admin to update status of an order")
     public ResponseEntity<?> updateStatusOfOrder(@PathVariable Long orderId,
                                                  @RequestBody @Valid OrderStatusUpdateRequest request) {
-        orderService.updateStatusOrder(orderId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(orderService.updateStatusOrder(orderId, request));
     }
 }
