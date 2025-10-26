@@ -35,16 +35,14 @@ public class MerchantController {
     @Operation(summary = "Register a business",
             description = "API for Merchant Admin to register a business")
     public ResponseEntity<?> registerMerchant(@RequestBody @Valid MerchantRegistrationRequest request) {
-        merchantService.registerMerchant(request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(merchantService.registerMerchant(request));
     }
 
     @PostMapping("/admin/registered-merchants/{id}/approve")
     @Operation(summary = "Approve a registered merchant",
             description = "API for System Admin to approve a registered merchant")
     public ResponseEntity<?> approveMerchant(@PathVariable Long id) throws MessagingException {
-        merchantService.approveMerchant(id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(merchantService.approveMerchant(id));
     }
 
     @GetMapping("/admin/merchants")
@@ -65,8 +63,7 @@ public class MerchantController {
     @Operation(summary = "Change a merchant's active status",
             description = "API for System Admin to activate/deactivate a merchant")
     public ResponseEntity<?> updateMerchantActiveStatus(@PathVariable Long id, @RequestParam boolean isActive) {
-        merchantService.updateMerchantActiveStatus(id, isActive);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(merchantService.updateMerchantActiveStatus(id, isActive));
     }
 
     @GetMapping("/merchant/my-merchant")
@@ -86,16 +83,14 @@ public class MerchantController {
 
             @RequestParam("img") MultipartFile imgFile
     ) {
-        merchantService.updateMyMerchant(request, imgFile);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(merchantService.updateMyMerchant(request, imgFile));
     }
 
     @PatchMapping("/merchant/my-merchant/isOpen")
     @Operation(summary = "Update my merchant's open status",
             description = "API for Merchant Admin to update their own merchant's open status")
     public ResponseEntity<?> updateMyMerchantOpenStatus(@RequestParam boolean isOpen) {
-        merchantService.updateMyMerchantOpenStatus(isOpen);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(merchantService.updateMyMerchantOpenStatus(isOpen));
     }
 
     @GetMapping("/merchants")
