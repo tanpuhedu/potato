@@ -114,8 +114,8 @@ public class MerchantServiceImpl implements MerchantService {
                 .fullName(registeredMerchant.getFullName())
                 .role(Role.MERCHANT_ADMIN)
                 .build();
-        log.info("Created merchant admin with mail: {}", registeredMerchant.getEmail());
         userRepository.save(merchantAdmin);
+        log.info("Created merchant admin with mail: {}", registeredMerchant.getEmail());
 
         // cập nhật trạng thái đăng kí kinh doanh
         registeredMerchant.setRegistrationStatus(RegistrationStatus.APPROVED);
