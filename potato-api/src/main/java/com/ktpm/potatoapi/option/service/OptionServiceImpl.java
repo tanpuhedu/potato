@@ -50,6 +50,11 @@ public class OptionServiceImpl implements OptionService {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
+        // validate merchant ownership
+        Merchant merchantOfOption = option.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
         return optionMapper.toOptionDetailResponse(option);
     }
 
@@ -118,6 +123,11 @@ public class OptionServiceImpl implements OptionService {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
+        // validate merchant ownership
+        Merchant merchantOfOption = option.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
         option.setName(request.getName());
         try {
             optionRepository.save(option);
@@ -133,6 +143,12 @@ public class OptionServiceImpl implements OptionService {
     public OptionValueResponse updateOptionValue(Long valueId, OptionValueRequest request) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
+
+        // validate merchant ownership
+        Option optionOfOptionValue = optionValue.getOption();
+        Merchant merchantOfOption = optionOfOptionValue.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
         optionValue.setName(request.getName());
         optionValue.setExtraPrice(request.getExtraPrice());
@@ -151,6 +167,12 @@ public class OptionServiceImpl implements OptionService {
     public OptionValueResponse updateOptionValueVisibleStatus(Long valueId, boolean isVisible) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
+
+        // validate merchant ownership
+        Option optionOfOptionValue = optionValue.getOption();
+        Merchant merchantOfOption = optionOfOptionValue.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
         optionValue.setVisible(isVisible);
 
@@ -184,6 +206,11 @@ public class OptionServiceImpl implements OptionService {
         Option option = optionRepository.findByIdAndIsActiveTrue(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
 
+        // validate merchant ownership
+        Merchant merchantOfOption = option.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
         List<MenuItem> menuItems =  menuItemRepository.findAllByIdInAndIsActiveTrue(request.getMenuItemIds());
 
         if (request.getMenuItemIds().size() != menuItems.size())
@@ -201,6 +228,12 @@ public class OptionServiceImpl implements OptionService {
     public void deleteOptionValue(Long valueId) {
         OptionValue optionValue = optionValueRepository.findById(valueId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_VALUE_NOT_FOUND));
+
+        // validate merchant ownership
+        Option optionOfOptionValue = optionValue.getOption();
+        Merchant merchantOfOption = optionOfOptionValue.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
         optionValue.setActive(false);
         optionValue.setVisible(false);
@@ -235,6 +268,11 @@ public class OptionServiceImpl implements OptionService {
     public void deleteOption(Long optionId) {
         Option option = optionRepository.findById(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
+
+        // validate merchant ownership
+        Merchant merchantOfOption = option.getMerchant();
+        if (!merchantOfOption.equals(securityUtils.getCurrentMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
         option.setActive(false);
         option.setVisible(false);
