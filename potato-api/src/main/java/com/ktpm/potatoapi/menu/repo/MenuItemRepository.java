@@ -17,5 +17,5 @@ public interface MenuItemRepository extends JpaRepository<MenuItem, Long> {
     @Query("UPDATE MenuItem m SET m.isActive = false, m.isVisible = false WHERE m.category.id = :categoryId")
     void deleteByCategoryId(@Param("categoryId") Long categoryId);
 
-    List<MenuItem> findAllByIdInAndIsActiveTrue(List<Long> menuItemIds);
+    List<MenuItem> findAllByIdInAndMerchantIdAndIsActiveTrue(List<Long> menuItemIds, Long merchantId);
 }
