@@ -12,18 +12,18 @@ import java.util.List;
 public interface MerchantService {
     // services for merchant on-boarding
     List<MerchantRegistrationResponse> getAllRegisteredMerchants();
-    void registerMerchant(MerchantRegistrationRequest request);
-    void approveMerchant(Long id) throws MessagingException;
+    MerchantRegistrationResponse registerMerchant(MerchantRegistrationRequest request);
+    MerchantRegistrationResponse approveMerchant(Long id) throws MessagingException;
 
     // services for SYSTEM ADMIN
     List<MerchantResponse> getAllMerchantsForSysAdmin();
     MerchantResponse getMerchantForSysAdmin(Long id);
-    void updateMerchantActiveStatus(Long id, boolean isActive);
+    MerchantResponse updateMerchantActiveStatus(Long id, boolean isActive);
 
     // services for MERCHANT ADMIN
     MerchantResponse getMyMerchant();
-    void updateMyMerchant(MerchantUpdateRequest request, MultipartFile imgFile);
-    void updateMyMerchantOpenStatus(boolean isOpen);
+    MerchantResponse updateMyMerchant(MerchantUpdateRequest request, MultipartFile imgFile);
+    MerchantResponse updateMyMerchantOpenStatus(boolean isOpen);
 
     // services for CUSTOMER
     List<MerchantResponse> getAllMerchantsForCustomer();

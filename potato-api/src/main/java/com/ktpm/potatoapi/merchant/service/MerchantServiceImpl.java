@@ -55,8 +55,10 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     public List<MerchantRegistrationResponse> getAllRegisteredMerchants() {
+        List<RegisteredMerchant> registeredMerchants = registeredMerchantRepository.findAll();
         log.info("Get all registered merchants");
-        return registeredMerchantRepository.findAll().stream()
+        return registeredMerchants
+                .stream()
                 .map(registeredMerchant -> {
                     MerchantRegistrationResponse response = registeredMerchantMapper.toResponse(registeredMerchant);
                     response.setCuisineTypes(mapCuisineTypeNames(registeredMerchant.getCuisineTypes()));
@@ -66,7 +68,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public void registerMerchant(MerchantRegistrationRequest request) {
+    public MerchantRegistrationResponse registerMerchant(MerchantRegistrationRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             log.error("User already exists with email: {}", request.getEmail());
             throw new AppException(ErrorCode.USER_EXISTED);
@@ -85,7 +87,11 @@ public class MerchantServiceImpl implements MerchantService {
 
         try {
             registeredMerchantRepository.save(registeredMerchant);
-            log.info("Register merchant {}", registeredMerchant.getMerchantName());
+            log.info("{} registered merchant {}", request.getEmail(), registeredMerchant.getMerchantName());
+
+            MerchantRegistrationResponse response = registeredMerchantMapper.toResponse(registeredMerchant);
+            response.setCuisineTypes(mapCuisineTypeNames(registeredMerchant.getCuisineTypes()));
+            return response;
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.MERCHANT_EXISTED);
         }
@@ -93,7 +99,7 @@ public class MerchantServiceImpl implements MerchantService {
 
     @Override
     @Transactional
-    public void approveMerchant(Long id) throws MessagingException {
+    public MerchantRegistrationResponse approveMerchant(Long id) throws MessagingException {
         RegisteredMerchant registeredMerchant = registeredMerchantRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.REGISTERED_MERCHANT_NOT_FOUND));
 
@@ -108,8 +114,8 @@ public class MerchantServiceImpl implements MerchantService {
                 .fullName(registeredMerchant.getFullName())
                 .role(Role.MERCHANT_ADMIN)
                 .build();
-        log.info("Create merchant admin with mail: {}", registeredMerchant.getEmail());
         userRepository.save(merchantAdmin);
+        log.info("Created merchant admin with mail: {}", registeredMerchant.getEmail());
 
         // cập nhật trạng thái đăng kí kinh doanh
         registeredMerchant.setRegistrationStatus(RegistrationStatus.APPROVED);
@@ -126,13 +132,19 @@ public class MerchantServiceImpl implements MerchantService {
         // gửi mail phê duyệt
         mailService.sendApprovalEmail(registeredMerchant.getEmail(), merchant.getName(), rawPassword);
 
-        log.info("Approve and Create merchant {}", merchant.getName());
+        log.info("Approve and Created merchant {}", merchant.getName());
+
+        MerchantRegistrationResponse response = registeredMerchantMapper.toResponse(registeredMerchant);
+        response.setCuisineTypes(mapCuisineTypeNames(registeredMerchant.getCuisineTypes()));
+        return response;
     }
 
     @Override
     public List<MerchantResponse> getAllMerchantsForSysAdmin() {
+        List<Merchant> merchants = merchantRepository.findAll();
         log.info("Get all merchants for System Admin");
-        return merchantRepository.findAll().stream()
+        return merchants
+                .stream()
                 .map(merchant -> {
                     MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
                     merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
@@ -148,13 +160,13 @@ public class MerchantServiceImpl implements MerchantService {
 
         log.info("Get merchant {} for System Admin", merchant.getName());
 
-        MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
-        merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
-        return merchantResponse;
+        MerchantResponse response = merchantMapper.toResponse(merchant);
+        response.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return response;
     }
 
     @Override
-    public void updateMerchantActiveStatus(Long id, boolean isActive) {
+    public MerchantResponse updateMerchantActiveStatus(Long id, boolean isActive) {
         Merchant merchant = merchantRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.MERCHANT_NOT_FOUND));
 
@@ -163,7 +175,11 @@ public class MerchantServiceImpl implements MerchantService {
 
         merchantRepository.save(merchant);
 
-        log.info("Update {}'s active status to {}", merchant.getName(), isActive);
+        log.info("Updated {}'s active status to {}", merchant.getName(), isActive);
+
+        MerchantResponse response = merchantMapper.toResponse(merchant);
+        response.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return response;
     }
 
     @Override
@@ -178,7 +194,7 @@ public class MerchantServiceImpl implements MerchantService {
     }
 
     @Override
-    public void updateMyMerchant(MerchantUpdateRequest request, MultipartFile imgFile) {
+    public MerchantResponse updateMyMerchant(MerchantUpdateRequest request, MultipartFile imgFile) {
         Merchant merchant = securityUtils.getCurrentMerchant();
 
         merchantMapper.update(merchant, request);
@@ -186,23 +202,33 @@ public class MerchantServiceImpl implements MerchantService {
         merchant.setImgUrl(uploadMerchantImage(imgFile, merchant.getName()));
         merchantRepository.save(merchant);
 
-        log.info("Update {}'s information", merchant.getName());
+        log.info("Updated {}'s information", merchant.getName());
+
+        MerchantResponse response = merchantMapper.toResponse(merchant);
+        response.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return response;
     }
 
     @Override
-    public void updateMyMerchantOpenStatus(boolean isOpen) {
+    public MerchantResponse updateMyMerchantOpenStatus(boolean isOpen) {
         Merchant merchant = securityUtils.getCurrentMerchant();
 
         merchant.setOpen(isOpen);
         merchantRepository.save(merchant);
 
-        log.info("Update {}'s open status to {}", merchant.getName(), isOpen);
+        log.info("Updated {}'s open status to {}", merchant.getName(), isOpen);
+
+        MerchantResponse response = merchantMapper.toResponse(merchant);
+        response.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));
+        return response;
     }
 
     @Override
     public List<MerchantResponse> getAllMerchantsForCustomer() {
+        List<Merchant> merchants = merchantRepository.findAllByIsOpenTrue();
         log.info("Get all merchants for Customer");
-        return merchantRepository.findAllByIsOpenTrue().stream()
+        return merchants
+                .stream()
                 .map(merchant -> {
                     MerchantResponse merchantResponse = merchantMapper.toResponse(merchant);
                     merchantResponse.setCuisineTypes(mapCuisineTypeNames(merchant.getCuisineTypes()));

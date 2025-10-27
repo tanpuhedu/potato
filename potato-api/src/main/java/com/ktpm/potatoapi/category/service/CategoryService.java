@@ -8,8 +8,8 @@ import java.util.List;
 public interface CategoryService {
     // services for Merchant Admin
     List<CategoryResponse> getAllCategoriesOfMyMerchant();
-    void createCategory(CategoryRequest categoryRequest);
-    void updateCategory(Long id, CategoryRequest categoryRequest);
+    CategoryResponse createCategory(CategoryRequest categoryRequest);
+    CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest);
     void deleteCategory(Long id);
 
     // services for Customer

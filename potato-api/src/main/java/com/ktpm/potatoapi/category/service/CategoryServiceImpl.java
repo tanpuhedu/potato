@@ -34,9 +34,12 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public List<CategoryResponse> getAllCategoriesOfMyMerchant() {
+        List<Category> categories = categoryRepository
+                .findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId());
+
         log.info("Get all categories for Merchant Admin");
-        return categoryRepository.findAllByMerchantIdAndIsActiveTrue(securityUtils.getCurrentMerchant().getId())
-                .stream()
+
+        return categories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
     }
@@ -49,16 +52,17 @@ public class CategoryServiceImpl implements CategoryService {
         if (!merchant.isOpen())
             throw new AppException(ErrorCode.MERCHANT_CLOSED);
 
+        List<Category> categories = categoryRepository.findAllByMerchantIdAndIsActiveTrue(merchantId);
+
         log.info("Get all categories for Customer");
 
-        return categoryRepository.findAllByMerchantIdAndIsActiveTrue(merchantId)
-                .stream()
+        return categories.stream()
                 .map(categoryMapper::toResponse)
                 .toList();
     }
 
     @Override
-    public void createCategory(CategoryRequest categoryRequest) {
+    public CategoryResponse createCategory(CategoryRequest categoryRequest) {
         Merchant merchant = securityUtils.getCurrentMerchant();
 
         Category category = new Category();
@@ -67,15 +71,16 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
             categoryRepository.save(category);
-            log.info("Create category {}", category.getName());
+            log.info("{} created category {}", merchant.getName(), category.getName());
+            return categoryMapper.toResponse(category);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.CATEGORY_EXISTED);
         }
     }
 
     @Override
-    public void updateCategory(Long id, CategoryRequest categoryRequest) {
-        Category category = categoryRepository.findById(id)
+    public CategoryResponse updateCategory(Long id, CategoryRequest categoryRequest) {
+        Category category = categoryRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Merchant merchant = securityUtils.getCurrentMerchant();
@@ -88,7 +93,9 @@ public class CategoryServiceImpl implements CategoryService {
 
         try {
             categoryRepository.save(category);
-            log.info("{} update category: {}", merchant.getName(), category.getName());
+            log.info("{} updated category: {}", merchant.getName(), category.getName());
+
+            return categoryMapper.toResponse(category);
         } catch (DataIntegrityViolationException e) {
             throw new AppException(ErrorCode.CATEGORY_EXISTED);
         }
@@ -111,6 +118,6 @@ public class CategoryServiceImpl implements CategoryService {
 
         menuItemRepository.deleteByCategoryId(category.getId()); // xóa các menu item thuộc category này
 
-        log.info("{} delete {} and its menu items", merchant.getName(), category.getName());
+        log.info("{} deleted {} and its menu items", merchant.getName(), category.getName());
     }
 }

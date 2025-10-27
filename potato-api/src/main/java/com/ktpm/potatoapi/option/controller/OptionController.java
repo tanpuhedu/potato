@@ -40,8 +40,9 @@ public class OptionController {
     @Operation(summary = "Create a new option and option values",
             description = "API for Merchant Admin to create a new option and its option value at once")
     public ResponseEntity<?> createOptionAndOptionValue(@RequestBody @Valid OptionCreationRequest request) {
-        optionService.createOptionAndOptionValue(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(optionService.createOptionAndOptionValue(request));
     }
 
     @PostMapping("/merchant/options/{optionId}/values")
@@ -49,24 +50,23 @@ public class OptionController {
             description = "API for Merchant Admin to create a new option value for an existing option")
     public ResponseEntity<?> createOptionValueForExistingOption(@PathVariable Long optionId,
                                                @RequestBody @Valid OptionValueRequest request) {
-        optionService.createOptionValueForExistingOption(optionId, request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(optionService.createOptionValueForExistingOption(optionId, request));
     }
 
     @PutMapping("merchant/options/{optionId}")
     @Operation(summary = "Update option information",
             description = "API for Merchant Admin to update an option information")
     public ResponseEntity<?> updateOption(@PathVariable Long optionId, OptionUpdateRequest request) {
-        optionService.updateOption(optionId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(optionService.updateOption(optionId, request));
     }
 
     @PutMapping("merchant/options/values/{valueId}")
     @Operation(summary = "Update option value information",
             description = "API for Merchant Admin to update an option value information")
     public ResponseEntity<?> updateOptionValue(@PathVariable Long valueId, OptionValueRequest request) {
-        optionService.updateOptionValue(valueId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(optionService.updateOptionValue(valueId, request));
     }
 
     @PatchMapping("/merchant/options/values/{valueId}/isVisible")
@@ -74,8 +74,7 @@ public class OptionController {
             description = "API for Merchant Admin to update an option value's visible status")
     public ResponseEntity<?> updateOptionValueVisibleStatus(@PathVariable Long valueId,
                                                             @RequestParam boolean isVisible) {
-        optionService.updateOptionValueVisibleStatus(valueId, isVisible);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(optionService.updateOptionValueVisibleStatus(valueId, isVisible));
     }
 
     @PostMapping("/merchant/options/{optionId}/assign-menu-items")
@@ -83,8 +82,7 @@ public class OptionController {
             description = "API for Merchant Admin to assign menu items to an existing option")
     public ResponseEntity<?> assignMenuItemToOption(@PathVariable Long optionId,
                                                     @RequestBody AddMenuItemToOptionRequest request) {
-        optionService.assignMenuItemToOption(optionId, request);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(optionService.assignMenuItemToOption(optionId, request));
     }
 
     @DeleteMapping("/merchant/options/values/{valueId}")

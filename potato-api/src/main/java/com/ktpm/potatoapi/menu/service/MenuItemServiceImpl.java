@@ -80,7 +80,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public void createMenuItem(MenuItemRequest menuItemRequest) {
+    public MenuItemDetailResponse createMenuItem(MenuItemRequest menuItemRequest) {
         Category category = categoryRepository.findById(menuItemRequest.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
@@ -93,7 +93,9 @@ public class MenuItemServiceImpl implements MenuItemService {
 
         try {
             menuItemRepository.save(menuItem);
-            log.info("{} create item {} successfully", merchant.getName(), menuItem.getName());
+            log.info("{} created item {} in category {}", merchant.getName(), menuItem.getName(), category.getName());
+
+            return menuItemMapper.toMenuItemDetailResponse(menuItem);
         } catch (DataIntegrityViolationException e) {
             log.error("Menu item with name {} already exists in {}", menuItem.getName(), merchant.getName());
             throw new AppException(ErrorCode.MENU_ITEM_EXISTED);
@@ -101,7 +103,7 @@ public class MenuItemServiceImpl implements MenuItemService {
     }
 
     @Override
-    public void updateMenuItem(Long menuItemId, MenuItemRequest menuItemRequest) {
+    public MenuItemDetailResponse updateMenuItem(Long menuItemId, MenuItemRequest menuItemRequest) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 
@@ -119,19 +121,27 @@ public class MenuItemServiceImpl implements MenuItemService {
         menuItem.setImgUrl(uploadMenuItemImage(menuItemRequest.getImgFile(), menuItem.getName()));
         menuItemRepository.save(menuItem);
 
-        log.info("Update menu item {}", menuItem.getName());
+        log.info("{} updated item {} in category {}", merchant.getName(), menuItem.getName(), category.getName());
+
+        return menuItemMapper.toMenuItemDetailResponse(menuItem);
     }
 
     @Override
-    public void updateMenuItemVisibleStatus(Long menuItemId, boolean isVisible) {
+    public MenuItemResponse updateMenuItemVisibleStatus(Long menuItemId, boolean isVisible) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 
+        // Check menu item must be owned of current merchant
+        Merchant merchant = securityUtils.getCurrentMerchant();
+        if (!merchant.equals(menuItem.getMerchant()))
+            throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
+
         menuItem.setVisible(isVisible);
         menuItemRepository.save(menuItem);
+
+        return menuItemMapper.toMenuItemResponse(menuItem);
     }
 
-    // thiếu xóa món ăn thì xóa liên kết với option
     @Override
     public void deleteMenuItem(Long menuItemId) {
         MenuItem menuItem = menuItemRepository.findById(menuItemId)

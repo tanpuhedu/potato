@@ -8,6 +8,6 @@ import java.util.List;
 public interface CuisineTypeService {
     List<CuisineTypeResponse> getAllCuisineTypes();
     List<CuisineTypeResponse> getAllVisibleCuisineTypes();
-    void createCuisineType(CuisineTypeRequest request);
-    void updateCuisineTypeStatus(Long id, boolean isVisible);
+    CuisineTypeResponse createCuisineType(CuisineTypeRequest request);
+    CuisineTypeResponse updateCuisineTypeStatus(Long id, boolean isVisible);
 }

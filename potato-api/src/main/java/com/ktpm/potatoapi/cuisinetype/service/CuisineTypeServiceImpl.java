@@ -44,28 +44,31 @@ public class CuisineTypeServiceImpl implements CuisineTypeService {
     }
 
     @Override
-    public void createCuisineType(CuisineTypeRequest request) {
+    public CuisineTypeResponse createCuisineType(CuisineTypeRequest request) {
         CuisineType cuisineType = new CuisineType();
         cuisineType.setName(request.getName());
         cuisineType.setImgUrl(uploadCuisineTypeImage(request.getImgFile(), request.getName()));
 
         try {
             cuisineTypeRepository.save(cuisineType);
-            log.info("Create cuisine type {} successfully", request.getName());
+            log.info("Created cuisine type {}", request.getName());
+
+            return mapper.toResponse(cuisineType);
         } catch (DataIntegrityViolationException e) {
-            log.error("Create cuisine type failed");
             throw new AppException(ErrorCode.CUISINE_TYPE_EXISTED);
         }
     }
 
     @Override
-    public void updateCuisineTypeStatus(Long id, boolean isVisible) {
+    public CuisineTypeResponse updateCuisineTypeStatus(Long id, boolean isVisible) {
         CuisineType cuisineType = cuisineTypeRepository.findById(id)
                 .orElseThrow(() -> new AppException(ErrorCode.CUISINE_TYPE_NOT_FOUND));
 
         cuisineType.setVisible(isVisible);
         cuisineTypeRepository.save(cuisineType);
-        log.info("Update {}'s visible status successfully", cuisineType.getName());
+        log.info("Updated {}'s visible status", cuisineType.getName());
+
+        return mapper.toResponse(cuisineType);
     }
 
     private String uploadCuisineTypeImage(MultipartFile file, String objectName) {

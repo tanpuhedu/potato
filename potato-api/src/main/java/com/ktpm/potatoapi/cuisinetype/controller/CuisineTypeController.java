@@ -8,14 +8,13 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@Tag(name = "Cuisine Type Controller", description = "APIs for cuisine type module")
+@Tag(name = "Cuisine Type APIs", description = "APIs for cuisine type")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class CuisineTypeController {
     CuisineTypeService cuisineTypeService;
@@ -38,15 +37,13 @@ public class CuisineTypeController {
     @Operation(summary = "Create a new cuisine type",
             description = "API for System Admin to create a new cuisine type")
     public ResponseEntity<?> createCuisineType(@ModelAttribute @Valid CuisineTypeRequest request) {
-        cuisineTypeService.createCuisineType(request);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(cuisineTypeService.createCuisineType(request));
     }
 
-    @PatchMapping("/admin/cuisine-types/{id}/status")
+    @PatchMapping("/admin/cuisine-types/{id}/isVisible")
     @Operation(summary = "Update a cuisine type's visible status",
             description = "API for System Admin to delete a cuisine type")
     public ResponseEntity<?> updateCuisineTypeStatus(@PathVariable Long id, @RequestParam boolean isVisible) {
-        cuisineTypeService.updateCuisineTypeStatus(id, isVisible);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(cuisineTypeService.updateCuisineTypeStatus(id, isVisible));
     }
 }

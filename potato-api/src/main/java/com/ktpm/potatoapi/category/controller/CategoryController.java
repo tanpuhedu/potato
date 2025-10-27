@@ -8,7 +8,6 @@ import jakarta.validation.Valid;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 @Tag(name = "Category APIs", description = "APIs for category")
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
-@CrossOrigin(origins = "*")
 public class CategoryController {
     CategoryService categoryService;
 
@@ -31,15 +29,13 @@ public class CategoryController {
     @Operation(summary = "Create a new category",
             description = "API for Merchant Admin to create a new category")
     public ResponseEntity<?> createCategory(@RequestBody @Valid CategoryRequest categoryRequest) {
-        categoryService.createCategory(categoryRequest);
-        return ResponseEntity.status(HttpStatus.CREATED).build();
+        return ResponseEntity.ok(categoryService.createCategory(categoryRequest));
     }
 
     @PutMapping("/merchant/categories/{id}")
     @Operation(summary = "Update category", description = "API for Merchant Admin to update category")
     public ResponseEntity<?> updateCategory(@PathVariable Long id, @RequestBody CategoryRequest categoryRequest) {
-        categoryService.updateCategory(id, categoryRequest);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok(categoryService.updateCategory(id, categoryRequest));
     }
 
     @DeleteMapping("/merchant/categories/{id}")

@@ -8,7 +8,7 @@ import java.util.List;
 
 public interface OrderService {
     // services for customer
-    void createOrder(OrderRequest cartOrderRequest);
+    OrderResponse createOrder(OrderRequest cartOrderRequest);
     List<OrderResponse> getAllOrdersOfCustomer();
 
     // mutual service
@@ -16,5 +16,5 @@ public interface OrderService {
 
     // services for merchant admin
     List<OrderResponse> getAllOrdersOfMyMerchant();
-    void updateStatusOrder(Long orderId, OrderStatusUpdateRequest request);
+    OrderResponse updateStatusOrder(Long orderId, OrderStatusUpdateRequest request);
 }
