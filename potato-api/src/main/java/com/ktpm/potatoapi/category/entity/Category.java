@@ -11,7 +11,7 @@ import lombok.experimental.FieldDefaults;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"active_name"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"merchant_id", "active_name"}))
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +25,7 @@ public class Category {
     @Generated
     String activeName;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     Merchant merchant;
 
     @PrePersist

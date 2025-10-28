@@ -5,7 +5,7 @@ import lombok.*;
 import lombok.experimental.FieldDefaults;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"option_id", "name"})})
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"option_id", "active_name"})})
 @Getter
 @Setter
 @NoArgsConstructor
@@ -21,6 +21,11 @@ public class OptionValue {
     boolean isDefault;
     boolean isVisible;
     boolean isActive;
+
+    @Column(name = "active_name", insertable = false, updatable = false,
+            columnDefinition = "VARCHAR(255) GENERATED ALWAYS AS (IF(is_active, name, NULL)) STORED")
+    @Generated
+    String activeName;
 
     @ManyToOne
     Option option;
