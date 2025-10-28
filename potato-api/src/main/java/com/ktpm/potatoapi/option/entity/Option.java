@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "`option`", uniqueConstraints = {@UniqueConstraint(columnNames = {"merchant_id", "name"})})
+@Table(name = "`option`", uniqueConstraints = {@UniqueConstraint(columnNames = {"merchant_id", "active_name"})})
 @Getter
 @Setter
 @Builder
@@ -26,6 +26,11 @@ public class Option {
     boolean isRequired;
     boolean isVisible;
     boolean isActive;
+
+    @Column(name = "active_name", insertable = false, updatable = false,
+            columnDefinition = "VARCHAR(255) GENERATED ALWAYS AS (IF(is_active, name, NULL)) STORED")
+    @Generated
+    String activeName;
 
     @ManyToOne
     Merchant merchant;

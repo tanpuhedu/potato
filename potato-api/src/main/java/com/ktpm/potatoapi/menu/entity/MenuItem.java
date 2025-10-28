@@ -15,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @FieldDefaults(level = AccessLevel.PRIVATE)
-@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"merchant_id", "name"}))
+@Table(uniqueConstraints = @UniqueConstraint(columnNames = {"merchant_id", "active_name"}))
 public class MenuItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,7 +26,13 @@ public class MenuItem {
     Long basePrice;
     boolean isVisible;
     boolean isActive;
+
     String imgUrl;
+
+    @Column(name = "active_name", insertable = false, updatable = false,
+            columnDefinition = "VARCHAR(255) GENERATED ALWAYS AS (IF(is_active, name, NULL)) STORED")
+    @Generated
+    String activeName;
 
     @ManyToOne
     Merchant merchant;
