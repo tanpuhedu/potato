@@ -269,11 +269,7 @@ public class OptionServiceImpl implements OptionService {
         }
 
         // xử lí nếu đó là optionValue duy nhất của option
-        optionOfOptionValue.setActive(!visibleValues.isEmpty());
         optionOfOptionValue.setVisible(!visibleValues.isEmpty());
-
-        // xóa liên kết với các menu item của option này
-        optionOfOptionValue.getMenuItems().clear();
 
         optionValueRepository.saveAll(allValues);
         optionRepository.save(optionOfOptionValue);
