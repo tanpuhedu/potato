@@ -7,9 +7,9 @@ spring:
   application:
     name: potato-api
   datasource:
-    url: "jdbc:mysql://localhost:3307/potato_api"
+    url: ${SQL_URL:jdbc:mysql://127.0.0.1:3307/potato_api?serverTimezone=UTC}
     username: root
-    password: 171104
+    password: ${SQL_PASSWORD:171104}
   jpa:
     hibernate:
       ddl-auto: update
@@ -35,4 +35,4 @@ cloudinary:
   api_secret: "WHzx_91QpnZwhLi0DOrxJGMJDT4"
 
 app:
-  server-url: "http://localhost:8080"
+  server-url: ${APP_SERVER_URL:http://localhost:8080}
