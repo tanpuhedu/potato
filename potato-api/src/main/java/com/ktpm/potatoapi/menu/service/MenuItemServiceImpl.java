@@ -71,17 +71,14 @@ public class MenuItemServiceImpl implements MenuItemService {
     public MenuItemDetailResponse getMenuItem(Long menuItemId) {
         MenuItem menuItem = menuItemRepository.findByIdAndIsActiveTrue(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
+        log.info("Get menu item {}", menuItemId);
 
-        MenuItemDetailResponse response = menuItemMapper.toMenuItemDetailResponse(menuItem);
-
-        log.info("Get menu item {} successfully",menuItemId);
-
-        return response;
+        return menuItemMapper.toMenuItemDetailResponse(menuItem);
     }
 
     @Override
     public MenuItemDetailResponse createMenuItem(MenuItemRequest menuItemRequest) {
-        Category category = categoryRepository.findById(menuItemRequest.getCategoryId())
+        Category category = categoryRepository.findByIdAndIsActiveTrue(menuItemRequest.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
         Merchant merchant = securityUtils.getCurrentMerchant();
@@ -104,15 +101,14 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public MenuItemDetailResponse updateMenuItem(Long menuItemId, MenuItemRequest menuItemRequest) {
-        MenuItem menuItem = menuItemRepository.findById(menuItemId)
+        MenuItem menuItem = menuItemRepository.findByIdAndIsActiveTrue(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 
-        Category category = categoryRepository.findById(menuItemRequest.getCategoryId())
+        Category category = categoryRepository.findByIdAndIsActiveTrue(menuItemRequest.getCategoryId())
                 .orElseThrow(() -> new AppException(ErrorCode.CATEGORY_NOT_FOUND));
 
-        Merchant merchant = securityUtils.getCurrentMerchant();
-
         // Check menu item must be owned of current merchant
+        Merchant merchant = securityUtils.getCurrentMerchant();
         if(!menuItem.getMerchant().equals(merchant))
             throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
@@ -128,7 +124,7 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public MenuItemResponse updateMenuItemVisibleStatus(Long menuItemId, boolean isVisible) {
-        MenuItem menuItem = menuItemRepository.findById(menuItemId)
+        MenuItem menuItem = menuItemRepository.findByIdAndIsActiveTrue(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 
         // Check menu item must be owned of current merchant
@@ -144,17 +140,16 @@ public class MenuItemServiceImpl implements MenuItemService {
 
     @Override
     public void deleteMenuItem(Long menuItemId) {
-        MenuItem menuItem = menuItemRepository.findById(menuItemId)
+        MenuItem menuItem = menuItemRepository.findByIdAndIsActiveTrue(menuItemId)
                 .orElseThrow(() -> new AppException(ErrorCode.MENU_ITEM_NOT_FOUND));
 
-        Merchant merchant = securityUtils.getCurrentMerchant();
-
         // Check menu item must be owned of current merchant
+        Merchant merchant = securityUtils.getCurrentMerchant();
         if(!menuItem.getMerchant().equals(merchant))
             throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
         // Remove the menu item from all associated options
-        List<Option> options = optionRepository.findAllByMenuItemsContaining(menuItem);
+        List<Option> options = menuItem.getOptions();
         for (Option option : options) {
             option.getMenuItems().remove(menuItem);
         }
