@@ -214,7 +214,6 @@ public class OptionServiceImpl implements OptionService {
     }
 
     @Override
-    // check: phải gán đúng menu của cửa hàng mình
     public OptionDetailResponse assignMenuItemToOption(Long optionId, AddMenuItemToOptionRequest request) {
         Option option = optionRepository.findByIdAndIsActiveTrue(optionId)
                 .orElseThrow(() -> new AppException(ErrorCode.OPTION_NOT_FOUND));
