@@ -18,4 +18,15 @@ public interface OptionRepository extends JpaRepository<Option, Long> {
     @Modifying
     @Query(value = "DELETE FROM option_menu_items WHERE menu_item_id = :menuItemId", nativeQuery = true)
     void deleteAllOptionLinksByMenuItemId(@Param("menuItemId") Long menuItemId);
+
+    @Transactional
+    @Modifying
+    @Query(value = """
+            DELETE FROM option_menu_items
+            WHERE menu_item_id IN (
+                SELECT id FROM menu_item WHERE category_id = :categoryId
+            )
+            """,
+            nativeQuery = true)
+    void deleteAllOptionLinksByCategoryId(@Param("categoryId") Long categoryId);
 }

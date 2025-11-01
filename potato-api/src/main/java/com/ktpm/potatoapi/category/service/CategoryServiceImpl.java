@@ -11,6 +11,7 @@ import com.ktpm.potatoapi.common.utils.SecurityUtils;
 import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
+import com.ktpm.potatoapi.option.repo.OptionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
 import lombok.experimental.FieldDefaults;
@@ -31,6 +32,7 @@ public class CategoryServiceImpl implements CategoryService {
     SecurityUtils securityUtils;
     MerchantRepository merchantRepository;
     MenuItemRepository menuItemRepository;
+    OptionRepository optionRepository;
 
     @Override
     public List<CategoryResponse> getAllCategoriesOfMyMerchant() {
@@ -113,10 +115,14 @@ public class CategoryServiceImpl implements CategoryService {
         if (!category.getMerchant().equals(merchant))
             throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
+        // xóa các liên kết của option và menu item thuộc cate này
+        optionRepository.deleteAllOptionLinksByCategoryId(id);
+
+        // xóa các menu item thuộc category này
+        menuItemRepository.deleteByCategoryId(category.getId());
+
         category.setActive(false);
         categoryRepository.save(category);
-
-        menuItemRepository.deleteByCategoryId(category.getId()); // xóa các menu item thuộc category này
 
         log.info("{} deleted {} and its menu items", merchant.getName(), category.getName());
     }
