@@ -14,7 +14,6 @@ import com.ktpm.potatoapi.menu.mapper.MenuItemMapper;
 import com.ktpm.potatoapi.menu.repo.MenuItemRepository;
 import com.ktpm.potatoapi.merchant.entity.Merchant;
 import com.ktpm.potatoapi.merchant.repo.MerchantRepository;
-import com.ktpm.potatoapi.option.entity.Option;
 import com.ktpm.potatoapi.option.repo.OptionRepository;
 import lombok.AccessLevel;
 import lombok.RequiredArgsConstructor;
@@ -149,11 +148,7 @@ public class MenuItemServiceImpl implements MenuItemService {
             throw new AppException(ErrorCode.MUST_BE_OWNED_OF_CURRENT_MERCHANT);
 
         // Remove the menu item from all associated options
-        List<Option> options = menuItem.getOptions();
-        for (Option option : options) {
-            option.getMenuItems().remove(menuItem);
-        }
-        optionRepository.saveAll(options);
+        optionRepository.deleteAllOptionLinksByMenuItemId(menuItemId);
 
         menuItem.setVisible(false);
         menuItem.setActive(false);

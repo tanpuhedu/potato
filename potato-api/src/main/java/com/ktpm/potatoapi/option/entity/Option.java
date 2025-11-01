@@ -40,6 +40,7 @@ public class Option {
 
     @ManyToMany
     @JoinTable(
+            name = "option_menu_items",
             joinColumns = @JoinColumn(name = "option_id"),
             inverseJoinColumns = @JoinColumn(name = "menu_item_id")
     )
